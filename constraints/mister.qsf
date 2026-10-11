@@ -1,0 +1,16 @@
+# Minimal Quartus settings for MiSTer / SuperStation (Cyclone V SE 5CSEBA6U23I7)
+# Device and family for DE10-Nano / MiSTer boards
+
+set_global_assignment -name FAMILY "Cyclone V"
+set_global_assignment -name DEVICE 5CSEBA6U23I7
+set_global_assignment -name TOP_LEVEL_ENTITY blinky
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name VERILOG_FILE ../../src/blinky.v
+
+# Clock pin (example — adjust for actual board; many MiSTer cores use specific PLL pins)
+set_location_assignment PIN_V11 -to clk
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to clk
+
+# LED pin (example — adjust)
+set_location_assignment PIN_W15 -to led
+set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to led
