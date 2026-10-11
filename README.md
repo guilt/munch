@@ -1,45 +1,43 @@
-# Multi-Board FPGA Blinky
+# munch — Multi-Board FPGA Blinky
 
-A minimal LED blinker (the FPGA "Hello World") targeting four boards with GitHub Actions CI that produces bitstreams as release artifacts.
+Minimal LED blinker that builds with Yosys (and open tools) and ships ready-to-flash images in GitHub Releases.
 
-**Boards:**
-- SuperStation One / MiSTer (Cyclone V, `.rbf`)
-- Tang Nano 9K (Gowin GW1NR-9, `.fs`)
-- Nexys 2 (Spartan-3E, `.bit` — legacy)
-- Arty S7 (Spartan-7, `.bit`)
+**Boards:** Tang Nano 9K · Arty S7 · Nexys 2 · SuperStation One / MiSTer
 
-## Simple Circuit
+## Flash it (easiest)
 
-One shared Verilog top-level (`src/blinky.v`) that drives a single LED from the MSB of a free-running counter. Board-specific pin constraints and (where needed) clock frequencies live under `constraints/` and `boards/`.
+1. Go to [Releases](https://github.com/guilt/munch/releases) and download the file for your board.
+2. Follow the one-liner in **[FLASH.md](FLASH.md)**.
 
-## Toolchains (combination is intentional)
-
-| Board              | Preferred flow                          | CI status on GitHub-hosted runners |
-|--------------------|-----------------------------------------|------------------------------------|
-| Tang Nano 9K       | Yosys + nextpnr-himbaechel + Apicula    | Fully open, works                  |
-| Arty S7            | openXC7 (Yosys + nextpnr-xilinx + prjxray) | Possible (chipdb heavy)         |
-| SuperStation / MiSTer | Quartus 17.0 Docker                  | Docker image available             |
-| Nexys 2            | ISE 14.7 Docker (Yosys synth optional)  | Possible but heavy (license + size)|
-
-See individual board directories or the workflow for exact commands.
-
-## GitHub Actions
-
-- Workflow: `.github/workflows/fpga.yml`
-- Builds on push/PR
-- Uploads bitstreams as artifacts
-- On tags (`v*`) creates a GitHub Release with the bitstreams attached
-
-## Local build
-
+Example (Tang Nano 9K):
 ```bash
-# Example: Tang Nano (after installing OSS CAD Suite or the packages)
-cd boards/tangnano9k
-make
+openFPGALoader -b tangnano9k blinky-tangnano9k.fs
 ```
 
-Flash with `openFPGALoader` or the vendor tool for your board.
+## What you get in each release
+
+| Board              | Artifact                 | Status                                      |
+|--------------------|--------------------------|---------------------------------------------|
+| Tang Nano 9K       | `blinky-tangnano9k.fs`   | Full open flow — ready to flash             |
+| Arty S7            | `blinky-arty-s7.bit`     | openXC7 (Yosys-based) when toolchain present|
+| Nexys 2            | `blinky-nexys2.edif`     | Yosys experimental synth only (needs ISE)   |
+| SuperStation / MiSTer | `blinky-superstation.rbf` | Quartus flow (not pure Yosys)            |
+
+Only the Tang Nano image is produced on every GitHub-hosted CI run today. The others are documented so you can finish them locally or on a self-hosted runner.
+
+## Design
+
+One shared Verilog (`src/blinky.v`) — free-running counter, MSB drives an LED. Board pin constraints live under `constraints/`.
+
+## Build locally (Tang Nano)
+
+```bash
+# Install OSS CAD Suite: https://github.com/YosysHQ/oss-cad-suite-build/releases
+cd boards/tangnano9k
+make
+openFPGALoader -b tangnano9k blinky-tangnano9k.fs
+```
 
 ## License
 
-MIT — the design is trivial; vendor toolchains remain under their own licenses.
+MIT
