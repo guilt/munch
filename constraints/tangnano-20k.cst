@@ -1,0 +1,9 @@
+// Tang Nano 20K constraints for blinky
+// Clock: pin 4 (27 MHz onboard)
+// LED0: pin 15 (active-low on many boards; adjust if needed)
+
+IO_LOC "clk" 4;
+IO_PORT "clk" IO_TYPE=LVCMOS33;
+
+IO_LOC "led" 15;
+IO_PORT "led" IO_TYPE=LVCMOS33;

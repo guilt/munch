@@ -16,17 +16,17 @@ Plug the board in with a data USB cable (not charge-only). Then run the matching
 
 ## Tang Nano 9K
 
-**File:** `blinky-tangnano9k.fs`  
+**File:** `blinky-tangnano-9k.fs`  
 **Open flow:** Yes (Yosys + nextpnr + Apicula)
 
 Temporary (SRAM):
 ```bash
-openFPGALoader -b tangnano9k blinky-tangnano9k.fs
+openFPGALoader -b tangnano9k blinky-tangnano-9k.fs
 ```
 
 Permanent (flash):
 ```bash
-openFPGALoader -b tangnano9k -f blinky-tangnano9k.fs
+openFPGALoader -b tangnano9k -f blinky-tangnano-9k.fs
 ```
 
 LED on pin 10 should blink.
@@ -84,7 +84,7 @@ openFPGALoader -c usb-blaster blinky-superstation.rbf
 
 | Board                  | Release artifact              | Flash command / method                          |
 |------------------------|-------------------------------|-------------------------------------------------|
-| Tang Nano 9K           | `blinky-tangnano9k.fs`        | `openFPGALoader -b tangnano9k FILE`             |
+| Tang Nano 9K           | `blinky-tangnano-9k.fs`        | `openFPGALoader -b tangnano9k FILE`             |
 | Arty S7                | `blinky-arty-s7.json`         | Finish with openXC7 → `openFPGALoader -b arty_s7` |
 | Nexys 2                | `blinky-nexys2.edif`          | Finish with ISE → `openFPGALoader -b nexys2`    |
 | SuperStation / MiSTer  | `blinky-superstation.rbf`     | Copy to SD card, or `openFPGALoader -c usb-blaster` |
@@ -92,3 +92,20 @@ openFPGALoader -c usb-blaster blinky-superstation.rbf
 Add `-f` to openFPGALoader commands for persistent flash where supported.
 
 Pin constraints are starting points — verify against your board schematic if the LED does not blink.
+
+## Tang Nano 20K
+
+```bash
+openFPGALoader -b tangnano20k blinky-tangnano-20k.fs
+```
+
+## Arty A7
+
+Full bitstream needs openXC7 or Vivado. Current release artifact is the Yosys netlist:
+
+```bash
+# After generating .bit with openXC7 or Vivado:
+openFPGALoader -b arty_a7_35t blinky-arty-a7.bit   # or arty_a7_100t
+```
+
+See the board's master XDC for pin confirmation (clk = E3, LED0 = H5).

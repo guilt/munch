@@ -3,10 +3,10 @@
 
 DEVICE   = GW1NR-LV9QN88PC6/I5
 FAMILY   = GW1N-9C
-CST      = ../../constraints/tangnano9k.cst
+CST      = ../../constraints/tangnano-9k.cst
 TOP      = blinky
 SRC      = ../../src/blinky.v
-OUT      = blinky-tangnano9k.fs
+OUT      = blinky-tangnano-9k.fs
 
 all: $(OUT)
 

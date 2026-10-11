@@ -15,15 +15,52 @@ jobs:
         uses: YosysHQ/setup-oss-cad-suite@v4
       - name: Build Tang Nano 9K bitstream
         run: |
-          cd boards/tangnano9k
+          cd boards/tangnano-9k
           make
-          ls -la blinky-tangnano9k.fs
+          ls -la blinky-tangnano-9k.fs
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: blinky-tangnano9k
-          path: boards/tangnano9k/blinky-tangnano9k.fs
+          name: blinky-tangnano-9k
+          path: boards/tangnano-9k/blinky-tangnano-9k.fs
           if-no-files-found: error
+
+  tang-nano-20k:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup OSS CAD Suite
+        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Build Tang Nano 20K bitstream
+        run: |
+          cd boards/tangnano-20k
+          make
+          ls -la blinky-tangnano-20k.fs
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: blinky-tangnano-20k
+          path: boards/tangnano-20k/blinky-tangnano-20k.fs
+          if-no-files-found: error
+
+
+  arty-a7:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup OSS CAD Suite
+        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Yosys synth for Arty A7
+        run: |
+          cd boards/arty-a7
+          make
+          ls -la blinky-arty-a7.*
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: blinky-arty-a7
+          path: boards/arty-a7/blinky-arty-a7.*
+          if-no-files-found: warn
 
   arty-s7:
     runs-on: ubuntu-latest
@@ -103,7 +140,7 @@ jobs:
           if-no-files-found: warn
 
   release:
-    needs: [tang-nano, arty-s7, nexys2, superstation-yosys]
+    needs: [tang-nano, tang-nano-20k, arty-a7, arty-s7, nexys2, superstation-yosys]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:

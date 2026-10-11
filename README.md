@@ -2,7 +2,7 @@
 
 Minimal LED blinker that builds with Yosys (and open tools) and ships ready-to-flash images in GitHub Releases.
 
-**Boards:** Tang Nano 9K · Arty S7 · Nexys 2 · SuperStation One / MiSTer (Cyclone V)
+**Boards:** Tang Nano 9K · Tang Nano 20K · Arty A7 · Arty S7 · Nexys 2 · SuperStation One / MiSTer (Cyclone V)
 
 ## Flash it (easiest)
 
@@ -11,14 +11,16 @@ Minimal LED blinker that builds with Yosys (and open tools) and ships ready-to-f
 
 Example (Tang Nano 9K):
 ```bash
-openFPGALoader -b tangnano9k blinky-tangnano9k.fs
+openFPGALoader -b tangnano9k blinky-tangnano-9k.fs
 ```
 
 ## What you get in each release
 
 | Board                  | Artifact                     | Status                                      |
 |------------------------|------------------------------|---------------------------------------------|
-| Tang Nano 9K           | `blinky-tangnano9k.fs`       | Full open flow — ready to flash             |
+| Tang Nano 9K           | `blinky-tangnano-9k.fs`       | Full open flow — ready to flash             |
+| Tang Nano 20K          | `blinky-tangnano-20k.fs`      | Full open flow — ready to flash             |
+| Arty A7                | `blinky-arty-a7.json`        | Yosys synth (openXC7 for full `.bit`)       |
 | Arty S7                | `blinky-arty-s7.json`        | Yosys synth (openXC7 for full `.bit`)       |
 | Nexys 2                | `blinky-nexys2.edif`         | Yosys experimental synth (needs ISE)        |
 | SuperStation / MiSTer  | `blinky-superstation.vqm`    | Yosys open synth (full .rbf needs local Quartus; CI image is incompatible) |
@@ -46,8 +48,14 @@ make clean
 Install [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build/releases), then:
 
 ```bash
-# Tang Nano (full bitstream)
-cd boards/tangnano9k && make
+# Tang Nano 9K (full bitstream)
+cd boards/tangnano-9k && make
+
+# Tang Nano 20K (full bitstream)
+cd boards/tangnano-20k && make
+
+# Arty A7 (JSON / EDIF)
+cd boards/arty-a7 && make
 
 # Arty S7 (JSON / EDIF)
 cd boards/arty-s7 && make
