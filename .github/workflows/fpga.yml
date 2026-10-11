@@ -19,13 +19,13 @@ jobs:
         run: |
           cd boards/tangnano9k
           make
-          ls -la *.fs || true
+          ls -la blinky-tangnano9k.fs
 
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: tangnano9k-fs
-          path: boards/tangnano9k/*.fs
+          name: blinky-tangnano9k
+          path: boards/tangnano9k/blinky-tangnano9k.fs
           if-no-files-found: error
 
   yosys-experimental:
@@ -36,24 +36,25 @@ jobs:
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
 
-      - name: Yosys experimental synth (Spartan-3E / others)
+      - name: Yosys experimental synth (Spartan-3E / Series-7)
         run: |
-          # Experimental Yosys targets (no full bitstream without vendor PnR)
-          yosys -p "read_verilog src/blinky.v; synth_xilinx -family xc3se -top blinky; write_edif build/nexys2.edif" || true
-          yosys -p "read_verilog src/blinky.v; synth_xilinx -family xc7 -top blinky; write_json build/arty_s7.json" || true
           mkdir -p build
-          echo "Yosys experimental synthesis attempted for Spartan-3E and Series-7" > build/yosys-notes.txt
-          ls -la build/ || true
+          # Nexys 2 / Spartan-3E — experimental family
+          yosys -p "read_verilog src/blinky.v; synth_xilinx -family xc3se -top blinky; write_edif build/blinky-nexys2.edif" || echo "xc3se synth failed" > build/nexys2-note.txt
+          # Arty S7 / Series-7 — synthesis only (full .bit needs openXC7 PnR)
+          yosys -p "read_verilog src/blinky.v; synth_xilinx -family xc7 -top blinky; write_json build/blinky-arty-s7.json" || echo "xc7 synth failed" > build/arty-note.txt
+          echo "See FLASH.md — these are Yosys intermediates, not final bitstreams." > build/README.txt
+          ls -la build/
 
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: yosys-experimental
+          name: yosys-intermediates
           path: build/
           if-no-files-found: warn
 
   release:
-    needs: [tang-nano]
+    needs: [tang-nano, yosys-experimental]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -62,11 +63,18 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           path: artifacts
+          merge-multiple: true
 
-      - name: Create Release with bitstreams
+      - name: Flatten for clean release assets
+        run: |
+          mkdir -p release
+          find artifacts -type f -exec cp {} release/ \;
+          ls -la release/
+
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: artifacts/**/*
+          files: release/*
           generate_release_notes: true
           draft: false
         env:
