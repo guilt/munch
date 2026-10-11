@@ -1,8 +1,10 @@
 # Board directories
 
-- `tangnano9k/` — fully open flow (Yosys + nextpnr-himbaechel + Apicula). Makefile provided.
-- `arty-s7/` — openXC7 recommended. Add a Makefile patterned after openXC7/demo-projects once chipdb is available.
-- `mister/` — Quartus 17.0 Docker. Create a `.qpf` / `.qsf` and invoke the container in CI.
-- `nexys2/` — ISE 14.7 Docker. Yosys can generate EDIF (`synth_xilinx -family xc3se -ise`); ISE does PnR + bitgen. Heavy for hosted runners.
+Each directory has a self-contained Makefile that works with the OSS CAD Suite (Yosys + open tools).
+
+- `tangnano9k/` — full open flow (Yosys + nextpnr-himbaechel + Apicula) → `blinky-tangnano9k.fs`
+- `arty-s7/` — Yosys `synth_xilinx` → `blinky-arty-s7.json` / `.edif` (finish with openXC7)
+- `nexys2/` — Yosys `synth_xilinx -family xc3se` → `blinky-nexys2.edif` (finish with ISE)
+- `mister/` — Yosys `synth_intel_alm` → `blinky-superstation.vqm` (finish with Quartus for `.rbf`)
 
 Pin constraints under `../constraints/` are starting points — always verify against your board schematic.

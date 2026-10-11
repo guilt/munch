@@ -11,16 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup OSS CAD Suite (Yosys + nextpnr + Apicula)
+      - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
-
       - name: Build Tang Nano 9K bitstream
         run: |
           cd boards/tangnano9k
           make
           ls -la blinky-tangnano9k.fs
-
       - uses: actions/upload-artifact@v4
         if: success()
         with:
@@ -28,94 +25,82 @@ jobs:
           path: boards/tangnano9k/blinky-tangnano9k.fs
           if-no-files-found: error
 
-  arty-s7-synth:
+  arty-s7:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
-
-      - name: Yosys synth for Arty S7 (JSON + EDIF)
+      - name: Yosys synth for Arty S7
         run: |
           cd boards/arty-s7
           make
           ls -la blinky-arty-s7.*
-
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: blinky-arty-s7-synth
+          name: blinky-arty-s7
           path: boards/arty-s7/blinky-arty-s7.*
           if-no-files-found: warn
 
-  mister-yosys:
+  nexys2:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
-
-      - name: Yosys synth_intel_alm for MiSTer / Cyclone V (VQM)
+      - name: Yosys synth for Nexys 2
         run: |
-          cd boards/mister
-          make yosys || echo "synth_intel_alm failed" > ../../build/mister-note.txt
-          ls -la blinky-mister.vqm || true
-          mkdir -p ../../build
-          cp blinky-mister.vqm ../../build/ 2>/dev/null || true
-
+          cd boards/nexys2
+          make
+          ls -la blinky-nexys2.edif
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: blinky-mister-vqm
-          path: boards/mister/blinky-mister.vqm
+          name: blinky-nexys2
+          path: boards/nexys2/blinky-nexys2.edif
           if-no-files-found: warn
 
-  mister-quartus:
+  superstation-yosys:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup OSS CAD Suite
+        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Yosys synth_intel_alm for SuperStation / Cyclone V
+        run: |
+          cd boards/mister
+          make
+          ls -la blinky-superstation.vqm
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: blinky-superstation
+          path: boards/mister/blinky-superstation.vqm
+          if-no-files-found: warn
+
+  superstation-quartus:
     runs-on: ubuntu-latest
     container: raetro/quartus:mister
     steps:
       - uses: actions/checkout@v4
-
-      - name: Attempt MiSTer / Cyclone V compile
+      - name: Attempt SuperStation / Cyclone V compile
         run: |
           cd boards/mister
-          make || echo "MiSTer Quartus flow failed (container may lack full device support or pin assignments)"
-          ls -la output_files/ || true
-          find . -name "*.sof" -o -name "*.rbf" || true
-
+          # Expect VQM already or generate; Quartus step is best-effort
+          make || true
+          # Simple Quartus invocation if tools present (image-specific)
+          quartus_map --version || echo "Quartus not fully available in this image"
+          find . -name "*.sof" -o -name "*.rbf" -o -name "*.vqm" || true
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: blinky-mister
-          path: boards/mister/**/*.{sof,rbf,rpt}
-          if-no-files-found: warn
-
-  yosys-experimental:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
-
-      - name: Yosys experimental synth (Spartan-3E)
-        run: |
-          mkdir -p build
-          yosys -p "read_verilog src/blinky.v; synth_xilinx -family xc3se -top blinky; write_edif build/blinky-nexys2.edif" || echo "xc3se synth failed" > build/nexys2-note.txt
-          echo "See FLASH.md — these are Yosys intermediates, not final bitstreams." > build/README.txt
-          ls -la build/
-
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: yosys-intermediates
-          path: build/
+          name: blinky-superstation-quartus
+          path: boards/mister/**/*.{sof,rbf,rpt,vqm}
           if-no-files-found: warn
 
   release:
-    needs: [tang-nano, arty-s7-synth, mister-yosys, mister-quartus, yosys-experimental]
+    needs: [tang-nano, arty-s7, nexys2, superstation-yosys, superstation-quartus]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
@@ -125,13 +110,11 @@ jobs:
         with:
           path: artifacts
           merge-multiple: true
-
       - name: Flatten for clean release assets
         run: |
           mkdir -p release
           find artifacts -type f -exec cp {} release/ \;
           ls -la release/
-
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:

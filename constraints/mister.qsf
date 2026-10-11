@@ -1,4 +1,4 @@
-# Minimal Quartus settings for MiSTer / SuperStation (Cyclone V SE 5CSEBA6U23I7)
+# Minimal Quartus settings for SuperStation One / MiSTer (Cyclone V, 5CSEBA6U23I7 compatible)
 # Device and family for DE10-Nano / MiSTer boards
 
 set_global_assignment -name FAMILY "Cyclone V"

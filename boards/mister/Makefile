@@ -1,15 +1,19 @@
-# MiSTer / SuperStation Cyclone V flow
-# Pure Yosys experimental path (synth_intel_alm) produces VQM for later Quartus use.
-# Full .sof/.rbf still needs Quartus (see CI Docker job).
+# SuperStation One / MiSTer (Cyclone V) open synthesis
+# Yosys synth_intel_alm produces a VQM netlist that Quartus can place & route.
+# Full .rbf requires Quartus (see CI or local Docker).
+
+TOP = blinky
+SRC = ../../src/blinky.v
+OUT = blinky-superstation.vqm
 
 .PHONY: all yosys clean
 
 all: yosys
 
-yosys: blinky-mister.vqm
+yosys: $(OUT)
 
-blinky-mister.vqm: ../../src/blinky.v
-	yosys -p "read_verilog ../../src/blinky.v; synth_intel_alm -family cyclonev -top blinky -vqm $@"
+$(OUT): $(SRC)
+	yosys -p "read_verilog $(SRC); synth_intel_alm -family cyclonev -top $(TOP) -vqm $@"
 
 clean:
 	rm -f *.vqm *.json

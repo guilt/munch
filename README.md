@@ -2,7 +2,7 @@
 
 Minimal LED blinker that builds with Yosys (and open tools) and ships ready-to-flash images in GitHub Releases.
 
-**Boards:** Tang Nano 9K · Arty S7 · Nexys 2 · SuperStation One / MiSTer
+**Boards:** Tang Nano 9K · Arty S7 · Nexys 2 · SuperStation One / MiSTer (Cyclone V)
 
 ## Flash it (easiest)
 
@@ -16,27 +16,38 @@ openFPGALoader -b tangnano9k blinky-tangnano9k.fs
 
 ## What you get in each release
 
-| Board              | Artifact                 | Status                                      |
-|--------------------|--------------------------|---------------------------------------------|
-| Tang Nano 9K       | `blinky-tangnano9k.fs`   | Full open flow — ready to flash             |
-| Arty S7            | `blinky-arty-s7.bit`     | openXC7 (Yosys-based) when toolchain present|
-| Nexys 2            | `blinky-nexys2.edif`     | Yosys experimental synth only (needs ISE)   |
-| SuperStation / MiSTer | `blinky-superstation.rbf` | Quartus flow (not pure Yosys)            |
+| Board                  | Artifact                     | Status                                      |
+|------------------------|------------------------------|---------------------------------------------|
+| Tang Nano 9K           | `blinky-tangnano9k.fs`       | Full open flow — ready to flash             |
+| Arty S7                | `blinky-arty-s7.json`        | Yosys synth (openXC7 for full `.bit`)       |
+| Nexys 2                | `blinky-nexys2.edif`         | Yosys experimental synth (needs ISE)        |
+| SuperStation / MiSTer  | `blinky-superstation.vqm`    | Yosys open synth; `.rbf` when Quartus runs  |
 
-Only the Tang Nano image is produced on every GitHub-hosted CI run today. The others are documented so you can finish them locally or on a self-hosted runner.
+Only the Tang Nano image is a complete open bitstream on every hosted CI run. The others produce open Yosys intermediates; finish them locally or with the documented Docker/Quartus step.
 
 ## Design
 
 One shared Verilog (`src/blinky.v`) — free-running counter, MSB drives an LED. Board pin constraints live under `constraints/`.
 
-## Build locally (Tang Nano)
+## Build locally (open toolchain)
+
+Install [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build/releases), then:
 
 ```bash
-# Install OSS CAD Suite: https://github.com/YosysHQ/oss-cad-suite-build/releases
-cd boards/tangnano9k
-make
-openFPGALoader -b tangnano9k blinky-tangnano9k.fs
+# Tang Nano (full bitstream)
+cd boards/tangnano9k && make
+
+# Arty S7 (JSON / EDIF)
+cd boards/arty-s7 && make
+
+# Nexys 2 (EDIF)
+cd boards/nexys2 && make
+
+# SuperStation / MiSTer (VQM)
+cd boards/mister && make
 ```
+
+For the SuperStation `.rbf`, run the Quartus Docker image used in CI or a local Quartus install against `constraints/mister.qsf`.
 
 ## License
 
