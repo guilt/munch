@@ -1,0 +1,86 @@
+name: FPGA Builds
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+
+jobs:
+  tang-nano:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install open tools
+        run: |
+          sudo apt-get update
+          # Minimal packages; for full reliability use OSS CAD Suite
+          pip install apycula
+          # nextpnr-himbaechel and yosys may need additional setup or the OSS CAD Suite tarball
+          # This job is a starting point — expand with the official installer for production
+
+      - name: Build Tang Nano 9K
+        run: |
+          cd boards/tangnano9k
+          # Uncomment and adjust once tools are fully available:
+          # make
+          echo "Tang Nano open flow ready (Yosys + nextpnr-himbaechel + gowin_pack)"
+          # touch blinky.fs   # placeholder for demo
+
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: tangnano9k-bitstream
+          path: boards/tangnano9k/*.fs
+          if-no-files-found: warn
+
+  arty-s7:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: openXC7 note
+        run: |
+          echo "Arty S7 uses openXC7 (Yosys + nextpnr-xilinx + prjxray)."
+          echo "See https://github.com/openXC7 for toolchain install."
+          echo "Chipdb generation is heavy; prefer a cached Docker image or self-hosted runner."
+
+  mister-cyclonev:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Quartus Docker note
+        run: |
+          echo "SuperStation / MiSTer Cyclone V uses Quartus 17.0 Docker images"
+          echo "(e.g. theypsilon/quartus-lite-c5 or raetro/quartus:mister)."
+          echo "Add a job that runs the container once a .qpf exists."
+
+  nexys2:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: ISE Docker note
+        run: |
+          echo "Nexys 2 (Spartan-3E) requires ISE 14.7."
+          echo "Community Docker images exist (Docked-ISE-147, etc.) but are ~20GB"
+          echo "and need the official installer + WebPACK license (not redistributable)."
+          echo "Practical mainly on self-hosted runners."
+
+  release:
+    needs: [tang-nano]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/**/*
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
