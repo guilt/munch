@@ -12,59 +12,45 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install open tools
-        run: |
-          sudo apt-get update
-          # Minimal packages; for full reliability use OSS CAD Suite
-          pip install apycula
-          # nextpnr-himbaechel and yosys may need additional setup or the OSS CAD Suite tarball
-          # This job is a starting point — expand with the official installer for production
+      - name: Setup OSS CAD Suite (Yosys + nextpnr + Apicula)
+        uses: YosysHQ/setup-oss-cad-suite@v4
 
-      - name: Build Tang Nano 9K
+      - name: Build Tang Nano 9K bitstream
         run: |
           cd boards/tangnano9k
-          # Uncomment and adjust once tools are fully available:
-          # make
-          echo "Tang Nano open flow ready (Yosys + nextpnr-himbaechel + gowin_pack)"
-          # touch blinky.fs   # placeholder for demo
+          make
+          ls -la *.fs || true
 
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: tangnano9k-bitstream
+          name: tangnano9k-fs
           path: boards/tangnano9k/*.fs
+          if-no-files-found: error
+
+  yosys-experimental:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup OSS CAD Suite
+        uses: YosysHQ/setup-oss-cad-suite@v4
+
+      - name: Yosys experimental synth (Spartan-3E / others)
+        run: |
+          # Experimental Yosys targets (no full bitstream without vendor PnR)
+          yosys -p "read_verilog src/blinky.v; synth_xilinx -family xc3se -top blinky; write_edif build/nexys2.edif" || true
+          yosys -p "read_verilog src/blinky.v; synth_xilinx -family xc7 -top blinky; write_json build/arty_s7.json" || true
+          mkdir -p build
+          echo "Yosys experimental synthesis attempted for Spartan-3E and Series-7" > build/yosys-notes.txt
+          ls -la build/ || true
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: yosys-experimental
+          path: build/
           if-no-files-found: warn
-
-  arty-s7:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: openXC7 note
-        run: |
-          echo "Arty S7 uses openXC7 (Yosys + nextpnr-xilinx + prjxray)."
-          echo "See https://github.com/openXC7 for toolchain install."
-          echo "Chipdb generation is heavy; prefer a cached Docker image or self-hosted runner."
-
-  mister-cyclonev:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Quartus Docker note
-        run: |
-          echo "SuperStation / MiSTer Cyclone V uses Quartus 17.0 Docker images"
-          echo "(e.g. theypsilon/quartus-lite-c5 or raetro/quartus:mister)."
-          echo "Add a job that runs the container once a .qpf exists."
-
-  nexys2:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: ISE Docker note
-        run: |
-          echo "Nexys 2 (Spartan-3E) requires ISE 14.7."
-          echo "Community Docker images exist (Docked-ISE-147, etc.) but are ~20GB"
-          echo "and need the official installer + WebPACK license (not redistributable)."
-          echo "Practical mainly on self-hosted runners."
 
   release:
     needs: [tang-nano]
@@ -77,10 +63,11 @@ jobs:
         with:
           path: artifacts
 
-      - name: Create Release
+      - name: Create Release with bitstreams
         uses: softprops/action-gh-release@v2
         with:
           files: artifacts/**/*
           generate_release_notes: true
+          draft: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
