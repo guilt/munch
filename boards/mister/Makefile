@@ -1,19 +1,15 @@
 # MiSTer / SuperStation Cyclone V flow
-# Expects Quartus (via Docker in CI) to be available as quartus_sh
+# Pure Yosys experimental path (synth_intel_alm) produces VQM for later Quartus use.
+# Full .sof/.rbf still needs Quartus (see CI Docker job).
 
-.PHONY: all clean
+.PHONY: all yosys clean
 
-all: output_files/blinky.sof
+all: yosys
 
-output_files/blinky.sof: ../../src/blinky.v ../../constraints/mister.qsf
-	mkdir -p output_files
-	# Copy or symlink constraints if needed; quartus_sh expects .qpf/.qsf in cwd or specified
-	cp ../../constraints/mister.qsf blinky.qsf || true
-	quartus_sh --flow compile blinky || echo "Quartus not available in this environment"
+yosys: blinky-mister.vqm
 
-# Produce .rbf for MiSTer SD card if .sof exists
-rbf: output_files/blinky.sof
-	quartus_cpf -c output_files/blinky.sof blinky-superstation.rbf || true
+blinky-mister.vqm: ../../src/blinky.v
+	yosys -p "read_verilog ../../src/blinky.v; synth_intel_alm -family cyclonev -top blinky -vqm $@"
 
 clean:
-	rm -rf output_files db incremental_db *.sof *.rbf *.rpt *.summary
+	rm -f *.vqm *.json

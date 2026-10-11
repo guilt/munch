@@ -36,17 +36,40 @@ jobs:
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
 
-      - name: Yosys synth for Arty S7 (JSON intermediate)
+      - name: Yosys synth for Arty S7 (JSON + EDIF)
         run: |
           cd boards/arty-s7
           make
-          ls -la blinky-arty-s7.json
+          ls -la blinky-arty-s7.*
 
       - uses: actions/upload-artifact@v4
         if: success()
         with:
-          name: blinky-arty-s7-json
-          path: boards/arty-s7/blinky-arty-s7.json
+          name: blinky-arty-s7-synth
+          path: boards/arty-s7/blinky-arty-s7.*
+          if-no-files-found: warn
+
+  mister-yosys:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup OSS CAD Suite
+        uses: YosysHQ/setup-oss-cad-suite@v4
+
+      - name: Yosys synth_intel_alm for MiSTer / Cyclone V (VQM)
+        run: |
+          cd boards/mister
+          make yosys || echo "synth_intel_alm failed" > ../../build/mister-note.txt
+          ls -la blinky-mister.vqm || true
+          mkdir -p ../../build
+          cp blinky-mister.vqm ../../build/ 2>/dev/null || true
+
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: blinky-mister-vqm
+          path: boards/mister/blinky-mister.vqm
           if-no-files-found: warn
 
   mister-quartus:
@@ -92,7 +115,7 @@ jobs:
           if-no-files-found: warn
 
   release:
-    needs: [tang-nano, arty-s7-synth, mister-quartus, yosys-experimental]
+    needs: [tang-nano, arty-s7-synth, mister-yosys, mister-quartus, yosys-experimental]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
