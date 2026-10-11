@@ -31,6 +31,18 @@ One shared Verilog (`src/blinky.v`) — free-running counter, MSB drives an LED.
 
 ## Build locally (open toolchain)
 
+## Quick start with top-level Makefile
+
+```bash
+make              # show help
+make pre-check    # verify tools
+make build        # build default board (Tang Nano 9K)
+make BOARD=arty-s7 build
+make flash        # flash default board (openFPGALoader)
+make clean
+```
+
+
 Install [OSS CAD Suite](https://github.com/YosysHQ/oss-cad-suite-build/releases), then:
 
 ```bash
