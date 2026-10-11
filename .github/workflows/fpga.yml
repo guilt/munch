@@ -82,25 +82,28 @@ jobs:
   superstation-quartus:
     runs-on: ubuntu-latest
     container: raetro/quartus:mister
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
-      - name: Attempt SuperStation / Cyclone V compile
+        continue-on-error: true
+      - name: Attempt SuperStation / Cyclone V compile (best-effort)
+        continue-on-error: true
         run: |
-          cd boards/mister
-          # Expect VQM already or generate; Quartus step is best-effort
+          cd boards/mister || true
           make || true
-          # Simple Quartus invocation if tools present (image-specific)
-          quartus_map --version || echo "Quartus not fully available in this image"
+          quartus_map --version || echo "Quartus image incompatible with current Actions runner (glibc)"
           find . -name "*.sof" -o -name "*.rbf" -o -name "*.vqm" || true
+          echo "Full .rbf requires local Quartus or a newer image. Open artifact is blinky-superstation.vqm."
       - uses: actions/upload-artifact@v4
         if: always()
+        continue-on-error: true
         with:
           name: blinky-superstation-quartus
           path: boards/mister/**/*.{sof,rbf,rpt,vqm}
           if-no-files-found: warn
 
   release:
-    needs: [tang-nano, arty-s7, nexys2, superstation-yosys, superstation-quartus]
+    needs: [tang-nano, arty-s7, nexys2, superstation-yosys]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:
