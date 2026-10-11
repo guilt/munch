@@ -1,0 +1,9 @@
+// Example Tang Nano 9K constraints for blinky
+// Clock: usually pin 4 or the onboard oscillator (check your board schematic)
+// LED: adjust to an available LED pin (many boards use active-low)
+
+IO_LOC "clk" 52;
+IO_PORT "clk" IO_TYPE=LVCMOS33;
+
+IO_LOC "led" 10;
+IO_PORT "led" IO_TYPE=LVCMOS33;
