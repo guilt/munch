@@ -58,7 +58,7 @@ jobs:
         if: success()
         with:
           name: blinky-nexys2
-          path: boards/nexys2/blinky-nexys2.edif
+          path: boards/nexys2/blinky-nexys2.*
           if-no-files-found: warn
 
   superstation-yosys:
