@@ -88,11 +88,11 @@ mister:
 	$(MAKE) -C boards/mister
 
 build: ## Build the selected board (BOARD=..., default tangnano-9k)
+	@echo "Building board: $(BOARD)"
+	$(MAKE) $(BOARD)
 
 bit: ## Build final artifact for BOARD (default tangnano-9k). Intermediates stay in the board dir.
 	$(MAKE) -C $(BOARD_DIR) bit
-	@echo "Building board: $(BOARD)"
-	$(MAKE) $(BOARD)
 
 # Flash targets (best-effort; openFPGALoader)
 flash-tangnano-9k: ## Flash Tang Nano 9K with openFPGALoader
