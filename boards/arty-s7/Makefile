@@ -1,13 +1,19 @@
-# Experimental openXC7 / Yosys flow for Arty S7 (Spartan-7)
-# Pure Yosys synthesis to JSON (and EDIF for completeness).
-# Default target is Yosys synth only (JSON + EDIF).
-# Full .bit is NOT built here — OSS CAD Suite / CI do not include nextpnr-xilinx.
-# For a full bitstream install openXC7 locally and run nextpnr-xilinx + Project X-Ray.
+# Arty S7 (Spartan-7) — Yosys + optional openXC7
+# Default (CI): Yosys synth → JSON + EDIF
+# Full .bit:   make bit   (requires local openXC7: nextpnr-xilinx + prjxray)
 
-TOP = blinky
-SRC = ../../src/blinky.v
+TOP      = blinky
+SRC      = ../../src/blinky.v
+XDC      = ../../constraints/arty-s7.xdc
+PART     = xc7s50csga324-1
+FAMILY   = spartan7
+DBPART   = xc7s50csga324
 
-.PHONY: all clean
+NEXTPNR_XILINX_DIR ?= /opt/openxc7
+CHIPDB             ?= $(NEXTPNR_XILINX_DIR)/share/xilinx/$(DBPART).bin
+PRJXRAY_DB         ?= $(NEXTPNR_XILINX_DIR)/external/prjxray-db
+
+.PHONY: all bit clean
 
 all: blinky-arty-s7.json blinky-arty-s7.edif
 
@@ -17,5 +23,20 @@ blinky-arty-s7.json: $(SRC)
 blinky-arty-s7.edif: $(SRC)
 	yosys -p "read_verilog $(SRC); synth_xilinx -family xc7 -top $(TOP); write_edif $@"
 
+bit: blinky-arty-s7.bit
+
+blinky-arty-s7.bit: blinky-arty-s7.json $(XDC)
+	@command -v nextpnr-xilinx >/dev/null 2>&1 || { \
+	  echo "nextpnr-xilinx not found. Install openXC7 and set NEXTPNR_XILINX_DIR."; \
+	  echo "See https://github.com/openXC7/toolchain-installer"; \
+	  exit 1; }
+	nextpnr-xilinx --chipdb $(CHIPDB) --xdc $(XDC) --json blinky-arty-s7.json --fasm blinky-arty-s7.fasm
+	fasm2frames --part $(PART) --db-root $(PRJXRAY_DB)/$(FAMILY) blinky-arty-s7.fasm > blinky-arty-s7.frames
+	xc7frames2bit --part_file $(PRJXRAY_DB)/$(FAMILY)/$(DBPART)/part.yaml \
+	              --part_name $(PART) \
+	              --frm_file blinky-arty-s7.frames \
+	              --output_file $@
+	@echo "Built $@"
+
 clean:
-	rm -f *.json *.edif *.fasm *.bit *.frames
+	rm -f *.json *.edif *.fasm *.frames *.bit

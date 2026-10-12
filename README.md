@@ -25,7 +25,7 @@ openFPGALoader -b tangnano9k blinky-tangnano-9k.fs
 | Nexys 2                | `blinky-nexys2.edif`         | Yosys experimental synth (needs ISE)        |
 | SuperStation / MiSTer  | `blinky-superstation.vqm`    | Yosys open synth (full .rbf needs local Quartus; CI image is incompatible) |
 
-Only the Tang Nano images are complete open bitstreams on every hosted CI run (OSS CAD Suite). Arty A7 / Arty S7 / Nexys 2 produce Yosys netlists only; full `.bit` needs a local openXC7 or vendor install. SuperStation produces a Yosys VQM; full `.rbf` needs local Quartus.
+Only the Tang Nano images are complete open bitstreams on every hosted CI run (OSS CAD Suite). Arty A7 / Arty S7 produce Yosys netlists by default; `make bit` (or `make arty-a7-bit`) runs the full openXC7 flow when nextpnr-xilinx is installed locally. Nexys 2 needs ISE. SuperStation needs local Quartus for `.rbf`.
 
 ## Design
 

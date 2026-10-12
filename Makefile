@@ -67,6 +67,12 @@ tangnano-20k: ## Build Tang Nano 20K full bitstream (.fs)
 
 arty-a7: ## Build Arty A7 Yosys netlist (.json + .edif)
 	$(MAKE) -C boards/arty-a7
+arty-a7-bit: ## Build Arty A7 full .bit (local openXC7 required)
+	$(MAKE) -C boards/arty-a7 bit
+
+arty-s7-bit: ## Build Arty S7 full .bit (local openXC7 required)
+	$(MAKE) -C boards/arty-s7 bit
+
 	$(MAKE) -C boards/tangnano-9k
 
 arty-s7: ## Build Arty S7 Yosys netlist (.json + .edif)
