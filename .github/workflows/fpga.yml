@@ -16,7 +16,7 @@ jobs:
       - name: Build Tang Nano 9K bitstream
         run: |
           cd boards/tangnano-9k
-          make
+          make bit
           ls -la blinky-tangnano-9k.fs
       - uses: actions/upload-artifact@v4
         if: success()
@@ -34,7 +34,7 @@ jobs:
       - name: Build Tang Nano 20K bitstream
         run: |
           cd boards/tangnano-20k
-          make
+          make bit
           ls -la blinky-tangnano-20k.fs
       - uses: actions/upload-artifact@v4
         if: success()
@@ -50,16 +50,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
-      - name: Yosys synth for Arty A7
+      - name: Build Arty A7 (intermediates + bit)
         run: |
           cd boards/arty-a7
-          make
-          ls -la blinky-arty-a7.*
-      - name: Attempt openXC7 bit (optional)
-        continue-on-error: true
-        run: |
-          cd boards/arty-a7
-          make bit || echo "openXC7 not available in this runner — skipping .bit"
+          make          # json + edif
+          make bit || echo "openXC7 missing — intermediates only"
           ls -la blinky-arty-a7.* || true
       - uses: actions/upload-artifact@v4
         if: always()
@@ -74,16 +69,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
-      - name: Yosys synth for Arty S7
+      - name: Build Arty S7 (intermediates + bit)
         run: |
           cd boards/arty-s7
           make
-          ls -la blinky-arty-s7.*
-      - name: Attempt openXC7 bit (optional)
-        continue-on-error: true
-        run: |
-          cd boards/arty-s7
-          make bit || echo "openXC7 not available in this runner — skipping .bit"
+          make bit || echo "openXC7 missing — intermediates only"
           ls -la blinky-arty-s7.* || true
       - uses: actions/upload-artifact@v4
         if: always()
@@ -98,11 +88,11 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
-      - name: Yosys synth for Nexys 2
+      - name: Build Nexys 2 (intermediates)
         run: |
           cd boards/nexys2
-          make
-          ls -la blinky-nexys2.edif
+          make bit
+          ls -la blinky-nexys2.*
       - uses: actions/upload-artifact@v4
         if: success()
         with:
