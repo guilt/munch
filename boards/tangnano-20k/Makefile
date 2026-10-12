@@ -9,6 +9,7 @@ SRC      = ../../src/blinky.v
 OUT      = blinky-tangnano-20k.fs
 
 all: $(OUT)
+bit: $(OUT)
 
 blinky.json: $(SRC)
 	yosys -p "read_verilog $<; synth_gowin -top $(TOP) -json $@"
@@ -22,6 +23,6 @@ blinky_pnr.json: blinky.json $(CST)
 $(OUT): blinky_pnr.json
 	gowin_pack -d $(FAMILY) -o $@ $<
 
-.PHONY: all clean
+.PHONY: all bit clean
 clean:
 	rm -f *.json *.fs

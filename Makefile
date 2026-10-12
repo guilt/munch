@@ -24,7 +24,7 @@ else
   BOARD_DIR := boards/$(BOARD)
 endif
 
-.PHONY: help pre-check check-tools build flash clean test \
+.PHONY: help pre-check check-tools build bit flash clean test \
 	tangnano-9k tangnano-20k arty-a7 arty-s7 nexys2 superstation mister \
 	flash-tangnano-9k flash-tangnano-20k flash-arty-a7 flash-arty-s7 flash-nexys2 flash-superstation
 
@@ -46,8 +46,10 @@ help: ## Show this help
 	@echo "  make flash                    # needs openFPGALoader + board"
 	@echo "  make clean"
 	@echo ""
-	@echo "Note: Arty A7 / Arty S7 default targets are Yosys synth only."
-	@echo "      Full .bit needs a local openXC7 install (not in OSS CAD Suite / CI)."
+	@echo "Artifact model:"
+	@echo "  make build          → board intermediates (json/edif/vqm/fasm)"
+	@echo "  make bit            → final artifact for BOARD (.fs / .bit / best open)"
+	@echo "  make BOARD=arty-a7 bit"
 
 pre-check: check-tools ## Check required tools are on PATH
 

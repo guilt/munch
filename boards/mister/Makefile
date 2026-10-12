@@ -9,6 +9,7 @@ OUT = blinky-superstation.vqm
 .PHONY: all yosys clean
 
 all: yosys
+bit: $(OUT)
 
 yosys: $(OUT)
 

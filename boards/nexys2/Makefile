@@ -4,9 +4,10 @@
 TOP = blinky
 SRC = ../../src/blinky.v
 
-.PHONY: all clean
+.PHONY: all bit clean
 
 all: blinky-nexys2.json blinky-nexys2.edif
+bit: blinky-nexys2.json blinky-nexys2.edif
 
 blinky-nexys2.json: $(SRC)
 	yosys -p "read_verilog $(SRC); synth_xilinx -family xc3se -top $(TOP); write_json $@"
