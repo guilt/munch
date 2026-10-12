@@ -1,6 +1,8 @@
 # Experimental openXC7 / Yosys flow for Arty S7 (Spartan-7)
 # Pure Yosys synthesis to JSON (and EDIF for completeness).
-# Full bitstream requires nextpnr-xilinx + prjxray chipdb (openXC7).
+# Default target is Yosys synth only (JSON + EDIF).
+# Full .bit is NOT built here — OSS CAD Suite / CI do not include nextpnr-xilinx.
+# For a full bitstream install openXC7 locally and run nextpnr-xilinx + Project X-Ray.
 
 TOP = blinky
 SRC = ../../src/blinky.v

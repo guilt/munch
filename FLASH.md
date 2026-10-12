@@ -85,7 +85,7 @@ openFPGALoader -c usb-blaster blinky-superstation.rbf
 | Board                  | Release artifact              | Flash command / method                          |
 |------------------------|-------------------------------|-------------------------------------------------|
 | Tang Nano 9K           | `blinky-tangnano-9k.fs`        | `openFPGALoader -b tangnano9k FILE`             |
-| Arty S7                | `blinky-arty-s7.json`         | Finish with openXC7 → `openFPGALoader -b arty_s7` |
+| Arty S7                | `blinky-arty-s7.json`         | Local openXC7 → `openFPGALoader -b arty_s7` |
 | Nexys 2                | `blinky-nexys2.edif`          | Finish with ISE → `openFPGALoader -b nexys2`    |
 | SuperStation / MiSTer  | `blinky-superstation.rbf`     | Copy to SD card, or `openFPGALoader -c usb-blaster` |
 
@@ -101,7 +101,7 @@ openFPGALoader -b tangnano20k blinky-tangnano-20k.fs
 
 ## Arty A7
 
-Full bitstream needs openXC7 or Vivado. Current release artifact is the Yosys netlist:
+Full bitstream needs a local openXC7 or Vivado install (not in CI). Current release artifact is the Yosys netlist:
 
 ```bash
 # After generating .bit with openXC7 or Vivado:

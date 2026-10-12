@@ -45,6 +45,9 @@ help: ## Show this help
 	@echo "  make BOARD=arty-s7 build"
 	@echo "  make flash                    # needs openFPGALoader + board"
 	@echo "  make clean"
+	@echo ""
+	@echo "Note: Arty A7 / Arty S7 default targets are Yosys synth only."
+	@echo "      Full .bit needs a local openXC7 install (not in OSS CAD Suite / CI)."
 
 pre-check: check-tools ## Check required tools are on PATH
 
