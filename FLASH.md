@@ -35,12 +35,12 @@ LED on pin 10 should blink.
 
 ## Arty S7 (Spartan-7)
 
-**File:** `blinky-arty-s7.json` (and `.edif`)  
-**Open flow:** `make` → Yosys JSON/EDIF. `make bit` → full `.bit` when openXC7 (nextpnr-xilinx + Project X-Ray) is installed locally.
+**File:** `blinky-arty-s7.bit`  
+**Open flow:** CI and local `make bit` produce the full `.bit` with openXC7.
 
-Temporary (when you have a `.bit`):
+Temporary:
 ```bash
-openFPGALoader -b arty_s7 blinky-arty-s7.bit
+openFPGALoader -b arty_s7_50 blinky-arty-s7.bit
 ```
 
 Permanent:
