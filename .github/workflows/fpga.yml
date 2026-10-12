@@ -55,8 +55,14 @@ jobs:
           cd boards/arty-a7
           make
           ls -la blinky-arty-a7.*
+      - name: Attempt openXC7 bit (optional)
+        continue-on-error: true
+        run: |
+          cd boards/arty-a7
+          make bit || echo "openXC7 not available in this runner — skipping .bit"
+          ls -la blinky-arty-a7.* || true
       - uses: actions/upload-artifact@v4
-        if: success()
+        if: always()
         with:
           name: blinky-arty-a7
           path: boards/arty-a7/blinky-arty-a7.*
@@ -73,8 +79,14 @@ jobs:
           cd boards/arty-s7
           make
           ls -la blinky-arty-s7.*
+      - name: Attempt openXC7 bit (optional)
+        continue-on-error: true
+        run: |
+          cd boards/arty-s7
+          make bit || echo "openXC7 not available in this runner — skipping .bit"
+          ls -la blinky-arty-s7.* || true
       - uses: actions/upload-artifact@v4
-        if: success()
+        if: always()
         with:
           name: blinky-arty-s7
           path: boards/arty-s7/blinky-arty-s7.*
