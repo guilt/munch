@@ -11,7 +11,7 @@ DBPART   = xc7s50csga324
 
 NEXTPNR_XILINX_DIR ?= /opt/openxc7
 CHIPDB             ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/himbaechel/xilinx/chipdb-xc7s50.bin
-PRJXRAY_DB         ?= $(NEXTPNR_XILINX_DIR)/external/prjxray-db
+PRJXRAY_DB         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/external/prjxray-db
 
 .PHONY: all bit clean
 
