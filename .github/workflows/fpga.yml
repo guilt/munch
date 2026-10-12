@@ -61,10 +61,12 @@ jobs:
           nextpnr-xilinx --version || true
       - name: Build Arty A7 (intermediates + bit)
         run: |
+          export PATH="/opt/openxc7/bin:$PATH"
+          export NEXTPNR_XILINX_DIR=/opt/openxc7
           cd boards/arty-a7
           make          # json + edif
-          make bit || echo "openXC7 missing — intermediates only"
-          ls -la blinky-arty-a7.* || true
+          make bit
+          ls -la blinky-arty-a7.*
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -89,10 +91,12 @@ jobs:
           nextpnr-xilinx --version || true
       - name: Build Arty S7 (intermediates + bit)
         run: |
+          export PATH="/opt/openxc7/bin:$PATH"
+          export NEXTPNR_XILINX_DIR=/opt/openxc7
           cd boards/arty-s7
           make
-          make bit || echo "openXC7 missing — intermediates only"
-          ls -la blinky-arty-s7.* || true
+          make bit
+          ls -la blinky-arty-s7.*
       - uses: actions/upload-artifact@v4
         if: always()
         with:
