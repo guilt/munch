@@ -32,7 +32,7 @@ blinky-arty-s7.bit: blinky-arty-s7.json $(XDC)
 	  exit 1; }
 	$(or $(shell command -v nextpnr-xilinx),/opt/openxc7/bin/nextpnr-xilinx) --device $(PART) --chipdb $(CHIPDB) -o xdc=$(XDC) --json blinky-arty-s7.json -o fasm=blinky-arty-s7.fasm
 	$(or $(shell command -v fasm2frames),/opt/openxc7/bin/fasm2frames) --part $(PART) --db-root $(PRJXRAY_DB)/$(FAMILY) blinky-arty-s7.fasm > blinky-arty-s7.frames
-	$(or $(shell command -v xc7frames2bit),/opt/openxc7/bin/xc7frames2bit) --part_file $(PRJXRAY_DB)/$(FAMILY)/$(DBPART)/part.yaml \
+	$(or $(shell command -v xc7frames2bit),/opt/openxc7/bin/xc7frames2bit) --part_file $(PRJXRAY_DB)/$(FAMILY)/$(PART)/part.yaml \
 	              --part_name $(PART) \
 	              --frm_file blinky-arty-s7.frames \
 	              --output_file $@
