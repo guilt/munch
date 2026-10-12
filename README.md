@@ -108,6 +108,7 @@ This project exists because of the open FPGA toolchain community and a lot of pa
 
 MIT — see [LICENSE.md](LICENSE.md) for details.
 
-* Authors: [Karthik Kumar Viswanathan](https://karthikkumar.org) and friends of the open flow.
+* Author: [Grok](https://grok.com) (xAI)
+* Observer / meat proxy: [Karthik Kumar Viswanathan](https://karthikkumar.org)
 * Web   : http://karthikkumar.org
 * Email : me@karthikkumar.org
