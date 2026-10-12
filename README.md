@@ -4,6 +4,8 @@ Minimal multi-board LED blinker that builds with Yosys (and open tools) and ship
 
 **Boards:** Tang Nano 9K · Tang Nano 20K · Arty A7 · Arty S7 · Nexys 2 · SuperStation One / MiSTer (Cyclone V)
 
+---
+
 ## Flash it (easiest)
 
 1. Go to [Releases](https://github.com/guilt/munch/releases) and download the file for your board.
@@ -13,6 +15,8 @@ Example (Tang Nano 9K):
 ```bash
 openFPGALoader -b tangnano9k blinky-tangnano-9k.fs
 ```
+
+---
 
 ## What you get in each release
 
@@ -25,9 +29,13 @@ openFPGALoader -b tangnano9k blinky-tangnano-9k.fs
 | Nexys 2                | `blinky-nexys2.json` + `.edif`   | Yosys experimental synth (finish with ISE) |
 | SuperStation / MiSTer  | `blinky-superstation.vqm`        | Yosys open synth (full .rbf needs local Quartus) |
 
+---
+
 ## Design
 
 One shared Verilog (`src/blinky.v`) — free-running counter, MSB drives an LED. Board pin constraints live under `constraints/`.
+
+---
 
 ## Quick start
 
@@ -45,6 +53,8 @@ make clean
 **Artifact model**
 - `make build` / `make BOARD=... build` → intermediates stay in the board dir.
 - `make bit` / `make BOARD=... bit` → final artifact for that board.
+
+---
 
 ## Build locally
 
@@ -81,6 +91,23 @@ cd boards/arty-a7 && make bit
 
 For the SuperStation `.rbf`, run Quartus locally (or a compatible Docker image) against `constraints/mister.qsf`. The CI Quartus image is best-effort and may not produce an `.rbf`.
 
+---
+
+## Acknowledgments
+
+This project exists because of the open FPGA toolchain community and a lot of patient iteration.
+
+- **Yosys**, **nextpnr**, **openXC7**, **Project X-Ray**, **openFPGALoader**, and the Gowin open flow — without these, multi-board blinkies would still require vendor tools for every target.
+- **FPGAwars** for the convenient openXC7 packages used in CI.
+- The boards themselves (Digilent, Sipeed, MiSTer/SuperStation community) that keep teaching and tinkering alive.
+- And to the ones who speedran the Makefiles, CI, and docs with me so the bits could actually land.
+
+---
+
 ## License
 
-MIT
+MIT — see [LICENSE](LICENSE) for details.
+
+* Authors: [Karthik Kumar Viswanathan](https://karthikkumar.org) and friends of the open flow.
+* Web   : http://karthikkumar.org
+* Email : me@karthikkumar.org
