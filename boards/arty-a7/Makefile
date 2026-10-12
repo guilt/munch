@@ -28,11 +28,11 @@ blinky-arty-a7.edif: $(SRC)
 bit: blinky-arty-a7.bit
 
 blinky-arty-a7.bit: blinky-arty-a7.json $(XDC)
-	@command -v nextpnr-xilinx >/dev/null 2>&1 || { \
+	/opt/openxc7/bin/nextpnr-xilinx --help >/dev/null 2>&1 || command -v nextpnr-xilinx >/dev/null 2>&1 || { \
 	  echo "nextpnr-xilinx not found. Install openXC7 and set NEXTPNR_XILINX_DIR."; \
 	  echo "See https://github.com/openXC7/toolchain-installer"; \
 	  exit 1; }
-	nextpnr-xilinx --chipdb $(CHIPDB) --xdc $(XDC) --json blinky-arty-a7.json --fasm blinky-arty-a7.fasm
+	nextpnr-xilinx --device $(PART) --chipdb $(CHIPDB) -o xdc=$(XDC) --json blinky-arty-a7.json -o fasm=blinky-arty-a7.fasm
 	fasm2frames --part $(PART) --db-root $(PRJXRAY_DB)/$(FAMILY) blinky-arty-a7.fasm > blinky-arty-a7.frames
 	xc7frames2bit --part_file $(PRJXRAY_DB)/$(FAMILY)/$(DBPART)/part.yaml \
 	              --part_name $(PART) \
