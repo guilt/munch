@@ -29,7 +29,7 @@ endif
 	flash-tangnano-9k flash-tangnano-20k flash-arty-a7 flash-arty-s7 flash-nexys2 flash-superstation
 
 help: ## Show this help
-	@echo "munch — Multi-Board FPGA Blinky"
+	@echo "munch — Multi-FPGA Usable Newbie Chips"
 	@echo ""
 	@echo "Usage: make [target] [BOARD=<board>]"
 	@echo ""

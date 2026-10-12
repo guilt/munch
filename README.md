@@ -1,6 +1,6 @@
-# munch — Multi-Board FPGA Blinky
+# munch — Multi-FPGA Usable Newbie Chips
 
-Minimal LED blinker that builds with Yosys (and open tools) and ships ready-to-flash images in GitHub Releases.
+Minimal multi-board LED blinker that builds with Yosys (and open tools) and ships ready-to-flash images in GitHub Releases.
 
 **Boards:** Tang Nano 9K · Tang Nano 20K · Arty A7 · Arty S7 · Nexys 2 · SuperStation One / MiSTer (Cyclone V)
 
