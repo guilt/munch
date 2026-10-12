@@ -97,8 +97,8 @@ For the SuperStation `.rbf`, run Quartus locally (or a compatible Docker image) 
 
 This project exists because of the open FPGA toolchain community and a lot of patient iteration.
 
-- **Yosys**, **nextpnr**, **openXC7**, **Project X-Ray**, **openFPGALoader**, and the Gowin open flow — without these, multi-board blinkies would still require vendor tools for every target.
-- **FPGAwars** for the convenient openXC7 packages used in CI.
+- **[Yosys](https://github.com/YosysHQ/yosys)**, **[nextpnr](https://github.com/YosysHQ/nextpnr)**, **[openXC7](https://github.com/openXC7)**, **[Project X-Ray](https://github.com/f4pga/prjxray)**, **[openFPGALoader](https://github.com/trabucayre/openFPGALoader)**, and the Gowin open flow — without these, multi-board blinkies would still require vendor tools for every target.
+- **[FPGAwars](https://github.com/FPGAwars)** for the convenient openXC7 packages used in CI.
 - The boards themselves (Digilent, Sipeed, MiSTer/SuperStation community) that keep teaching and tinkering alive.
 - And to the ones who speedran the Makefiles, CI, and docs with me so the bits could actually land.
 
@@ -106,7 +106,7 @@ This project exists because of the open FPGA toolchain community and a lot of pa
 
 ## License
 
-MIT — see [LICENSE](LICENSE) for details.
+MIT — see [LICENSE.md](LICENSE.md) for details.
 
 * Authors: [Karthik Kumar Viswanathan](https://karthikkumar.org) and friends of the open flow.
 * Web   : http://karthikkumar.org
