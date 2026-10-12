@@ -50,6 +50,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install openXC7 (prebuilt Apio package)
+        run: |
+          gh release download 2026-10-11 --repo FPGAwars/tools-openxc7 \
+            --pattern "apio-openxc7-linux-x86-64-*.tgz" --dir /tmp
+          sudo mkdir -p /opt/openxc7
+          sudo tar xzf /tmp/apio-openxc7-linux-x86-64-*.tgz -C /opt/openxc7 --strip-components=1
+          echo "/opt/openxc7/bin" >> $GITHUB_PATH
+          echo "NEXTPNR_XILINX_DIR=/opt/openxc7" >> $GITHUB_ENV
+          nextpnr-xilinx --version || true
       - name: Build Arty A7 (intermediates + bit)
         run: |
           cd boards/arty-a7
@@ -69,6 +78,15 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install openXC7 (prebuilt Apio package)
+        run: |
+          gh release download 2026-10-11 --repo FPGAwars/tools-openxc7 \
+            --pattern "apio-openxc7-linux-x86-64-*.tgz" --dir /tmp
+          sudo mkdir -p /opt/openxc7
+          sudo tar xzf /tmp/apio-openxc7-linux-x86-64-*.tgz -C /opt/openxc7 --strip-components=1
+          echo "/opt/openxc7/bin" >> $GITHUB_PATH
+          echo "NEXTPNR_XILINX_DIR=/opt/openxc7" >> $GITHUB_ENV
+          nextpnr-xilinx --version || true
       - name: Build Arty S7 (intermediates + bit)
         run: |
           cd boards/arty-s7

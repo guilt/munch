@@ -11,7 +11,7 @@ DBPART   = xc7a35tcsg324
 
 # Override if your openXC7 install lives elsewhere
 NEXTPNR_XILINX_DIR ?= /opt/openxc7
-CHIPDB             ?= $(NEXTPNR_XILINX_DIR)/share/xilinx/$(DBPART).bin
+CHIPDB             ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/himbaechel/xilinx/chipdb-xc7a50t.bin
 PRJXRAY_DB         ?= $(NEXTPNR_XILINX_DIR)/external/prjxray-db
 
 .PHONY: all bit clean
