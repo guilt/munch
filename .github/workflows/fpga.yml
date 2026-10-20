@@ -50,14 +50,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
-      - name: Install openXC7 (prebuilt Apio package)
+      - name: Install full openXC7 toolchain (includes Kintex chipdbs)
         run: |
-          gh release download 2026-10-19 --repo FPGAwars/tools-openxc7 \
-            --pattern "apio-openxc7-linux-x86-64-*.tgz" --dir /tmp
+          curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
           sudo mkdir -p /opt/openxc7
-          sudo tar xzf /tmp/apio-openxc7-linux-x86-64-*.tgz -C /opt/openxc7 --strip-components=1
+          sudo tar xzf /tmp/openxc7.tgz -C /opt/openxc7 --strip-components=1
           echo "/opt/openxc7/bin" >> $GITHUB_PATH
           echo "NEXTPNR_XILINX_DIR=/opt/openxc7" >> $GITHUB_ENV
+          ls /opt/openxc7/share/nextpnr/himbaechel/xilinx/ | head -20 || true
           /opt/openxc7/bin/nextpnr-xilinx --version || true
       - name: Build Arty A7 (intermediates + bit)
         run: |
@@ -80,14 +80,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
-      - name: Install openXC7 (prebuilt Apio package)
+      - name: Install full openXC7 toolchain (includes Kintex chipdbs)
         run: |
-          gh release download 2026-10-19 --repo FPGAwars/tools-openxc7 \
-            --pattern "apio-openxc7-linux-x86-64-*.tgz" --dir /tmp
+          curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
           sudo mkdir -p /opt/openxc7
-          sudo tar xzf /tmp/apio-openxc7-linux-x86-64-*.tgz -C /opt/openxc7 --strip-components=1
+          sudo tar xzf /tmp/openxc7.tgz -C /opt/openxc7 --strip-components=1
           echo "/opt/openxc7/bin" >> $GITHUB_PATH
           echo "NEXTPNR_XILINX_DIR=/opt/openxc7" >> $GITHUB_ENV
+          ls /opt/openxc7/share/nextpnr/himbaechel/xilinx/ | head -20 || true
           /opt/openxc7/bin/nextpnr-xilinx --version || true
       - name: Build Arty S7 (intermediates + bit)
         run: |
@@ -170,14 +170,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup OSS CAD Suite
         uses: YosysHQ/setup-oss-cad-suite@v4
-      - name: Install openXC7 (prebuilt Apio package)
+      - name: Install full openXC7 toolchain (includes Kintex chipdbs)
         run: |
-          gh release download 2026-10-19 --repo FPGAwars/tools-openxc7 \
-            --pattern "apio-openxc7-linux-x86-64-*.tgz" --dir /tmp
+          curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
           sudo mkdir -p /opt/openxc7
-          sudo tar xzf /tmp/apio-openxc7-linux-x86-64-*.tgz -C /opt/openxc7 --strip-components=1
+          sudo tar xzf /tmp/openxc7.tgz -C /opt/openxc7 --strip-components=1
           echo "/opt/openxc7/bin" >> $GITHUB_PATH
           echo "NEXTPNR_XILINX_DIR=/opt/openxc7" >> $GITHUB_ENV
+          ls /opt/openxc7/share/nextpnr/himbaechel/xilinx/ | head -20 || true
       - name: Build Kintex-7 QMTech bitstream
         run: |
           cd boards/kintex7-qmtech
