@@ -13,7 +13,7 @@ CHIPDB_DIR         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/himbaechel/xilinx
 CHIPDB             ?= $(CHIPDB_DIR)/xc7k325t.bin
 PRJXRAY_DB         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/external/prjxray-db
 GEN_SCRIPT         ?= /tmp/nextpnr-gen/himbaechel/uarch/xilinx/gen/xilinx_gen.py
-META_ROOT          ?= /tmp/nextpnr-meta
+META_ROOT          ?= /tmp/nextpnr-meta/kintex7
 
 .PHONY: all bit clean
 
@@ -30,12 +30,12 @@ $(GEN_SCRIPT):
 	@echo "Fetching nextpnr gen scripts..."
 	git clone --depth 1 https://github.com/openXC7/nextpnr.git /tmp/nextpnr-gen
 
-$(META_ROOT)/kintex7/wire_intents.json:
+$(META_ROOT)/wire_intents.json:
 	@echo "Fetching nextpnr-xilinx-meta..."
 	git clone --depth 1 https://github.com/openXC7/nextpnr-xilinx-meta.git $(META_ROOT)
 
 # Generate Kintex chipdb if missing
-$(CHIPDB): $(GEN_SCRIPT) $(META_ROOT)/kintex7/wire_intents.json
+$(CHIPDB): $(GEN_SCRIPT) $(META_ROOT)/wire_intents.json
 	@mkdir -p $(CHIPDB_DIR)
 	@echo "Generating chipdb for xc7k325t..."
 	python3 $(GEN_SCRIPT) --xray $(PRJXRAY_DB)/$(FAMILY) --device xc7k325t --metadata $(META_ROOT) --bba /tmp/xc7k325t.bba
