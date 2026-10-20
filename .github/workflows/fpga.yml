@@ -163,8 +163,35 @@ jobs:
           path: boards/mister/**/*.{sof,rbf,rpt,vqm}
           if-no-files-found: warn
 
+
+  kintex7-qmtech:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup OSS CAD Suite
+        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install openXC7 (prebuilt Apio package)
+        run: |
+          gh release download 2026-10-11 --repo FPGAwars/tools-openxc7 \
+            --pattern "apio-openxc7-linux-x86-64-*.tgz" --dir /tmp
+          sudo mkdir -p /opt/openxc7
+          sudo tar xzf /tmp/apio-openxc7-linux-x86-64-*.tgz -C /opt/openxc7 --strip-components=1
+          echo "/opt/openxc7/bin" >> $GITHUB_PATH
+          echo "NEXTPNR_XILINX_DIR=/opt/openxc7" >> $GITHUB_ENV
+      - name: Build Kintex-7 QMTech bitstream
+        run: |
+          cd boards/kintex7-qmtech
+          make bit
+          ls -la blinky-kintex7-qmtech.bit || ls -la *.bit *.json *.edif
+      - uses: actions/upload-artifact@v4
+        if: success()
+        with:
+          name: blinky-kintex7-qmtech
+          path: boards/kintex7-qmtech/blinky-kintex7-qmtech.*
+          if-no-files-found: error
+
   release:
-    needs: [tang-nano, tang-nano-20k, arty-a7, arty-s7, nexys2, superstation-yosys]
+    needs: [tang-nano, tang-nano-20k, arty-a7, arty-s7, kintex7-qmtech, nexys2, superstation-yosys]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:

@@ -109,3 +109,8 @@ openFPGALoader -b arty_a7_35t blinky-arty-a7.bit   # or arty_a7_100t
 ```
 
 See the board's master XDC for pin confirmation (clk = E3, LED0 = H5).
+
+## Kintex-7 (QMTech XC7K325T)
+```bash
+openFPGALoader -b qmtechKintex7 blinky-kintex7-qmtech.bit
+```

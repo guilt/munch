@@ -13,7 +13,7 @@
 .DEFAULT_GOAL := help
 
 BOARD ?= tangnano-9k
-BOARDS := tangnano-9k tangnano-20k arty-a7 arty-s7 nexys2 superstation
+BOARDS := tangnano-9k tangnano-20k arty-a7 arty-s7 nexys2 superstation kintex7-qmtech
 
 ifeq ($(BOARD),superstation)
   BOARD_DIR := boards/mister
@@ -42,6 +42,9 @@ help: ## Show this help
 	@echo "  make bit                      # Tang Nano 9K .fs"
 	@echo "  make BOARD=arty-a7 bit        # Arty A7 .bit (needs openXC7)"
 	@echo "  make BOARD=arty-s7 bit"
+	@echo "  make BOARD=kintex7-qmtech bit   # Kintex-7 QMTech .bit (needs openXC7)"
+
+
 	@echo "  make flash"
 	@echo "  make clean"
 	@echo ""
@@ -71,6 +74,9 @@ arty-a7: ## Build Arty A7 Yosys netlist (.json + .edif)
 	$(MAKE) -C boards/arty-a7
 
 arty-s7: ## Build Arty S7 Yosys netlist (.json + .edif)
+kintex7-qmtech: ## Build Kintex-7 QMTech Yosys netlist (.json + .edif)
+	$(MAKE) -C boards/kintex7-qmtech
+
 	$(MAKE) -C boards/arty-s7
 
 nexys2: ## Build Nexys 2 Yosys netlist (.json + .edif)
@@ -101,7 +107,13 @@ flash-arty-a7: ## Flash Arty A7 (.bit via openFPGALoader)
 	openFPGALoader -b arty_a7_35t boards/arty-a7/blinky-arty-a7.bit
 
 flash-arty-s7: ## Flash Arty S7 (.bit via openFPGALoader)
+flash-kintex7-qmtech: ## Flash Kintex-7 QMTech (.bit via openFPGALoader)
+	openFPGALoader -b qmtechKintex7 boards/kintex7-qmtech/blinky-kintex7-qmtech.bit
+
 	@test -f boards/arty-s7/blinky-arty-s7.bit || { echo "Missing .bit. Run: make BOARD=arty-s7 bit"; exit 1; }
+	@echo "  make BOARD=kintex7-qmtech bit   # Kintex-7 QMTech .bit (needs openXC7)"
+
+
 	openFPGALoader -b arty_s7_50 boards/arty-s7/blinky-arty-s7.bit
 
 flash-nexys2: ## Flash Nexys 2 (needs ISE .bit)
@@ -127,6 +139,8 @@ clean: ## Clean all board build artifacts
 	$(MAKE) -C boards/tangnano-20k clean
 	$(MAKE) -C boards/arty-a7 clean
 	$(MAKE) -C boards/arty-s7 clean
+	$(MAKE) -C boards/kintex7-qmtech clean
+
 	$(MAKE) -C boards/nexys2 clean
 	$(MAKE) -C boards/mister clean
 	@echo "Cleaned."
