@@ -1,5 +1,5 @@
 # Kintex-7 (QMTech XC7K325T) — Yosys + openXC7
-# Generates chipdb on first use (clones gen scripts if package omits them).
+# Generates chipdb on first use (fetches gen scripts + metadata).
 
 TOP      = blinky
 SRC      = ../../src/blinky.v
@@ -13,6 +13,7 @@ CHIPDB_DIR         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/himbaechel/xilinx
 CHIPDB             ?= $(CHIPDB_DIR)/xc7k325t.bin
 PRJXRAY_DB         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/external/prjxray-db
 GEN_SCRIPT         ?= /tmp/nextpnr-gen/himbaechel/uarch/xilinx/gen/xilinx_gen.py
+META_ROOT          ?= /tmp/nextpnr-meta
 
 .PHONY: all bit clean
 
@@ -24,16 +25,20 @@ blinky-kintex7-qmtech.json: $(SRC)
 blinky-kintex7-qmtech.edif: $(SRC)
 	yosys -p "read_verilog $(SRC); synth_xilinx -family xc7 -top $(TOP); write_edif $@"
 
-# Ensure gen scripts exist (package does not ship them)
+# Fetch gen scripts and metadata
 $(GEN_SCRIPT):
 	@echo "Fetching nextpnr gen scripts..."
 	git clone --depth 1 https://github.com/openXC7/nextpnr.git /tmp/nextpnr-gen
 
+$(META_ROOT)/kintex7/wire_intents.json:
+	@echo "Fetching nextpnr-xilinx-meta..."
+	git clone --depth 1 https://github.com/openXC7/nextpnr-xilinx-meta.git $(META_ROOT)
+
 # Generate Kintex chipdb if missing
-$(CHIPDB): $(GEN_SCRIPT)
+$(CHIPDB): $(GEN_SCRIPT) $(META_ROOT)/kintex7/wire_intents.json
 	@mkdir -p $(CHIPDB_DIR)
 	@echo "Generating chipdb for xc7k325t..."
-	python3 $(GEN_SCRIPT) --xray $(PRJXRAY_DB)/$(FAMILY) --device xc7k325t --bba /tmp/xc7k325t.bba
+	python3 $(GEN_SCRIPT) --xray $(PRJXRAY_DB)/$(FAMILY) --device xc7k325t --metadata $(META_ROOT) --bba /tmp/xc7k325t.bba
 	$(NEXTPNR_XILINX_DIR)/bin/bbasm -l /tmp/xc7k325t.bba $(CHIPDB)
 	@rm -f /tmp/xc7k325t.bba
 
