@@ -52,7 +52,7 @@ jobs:
         uses: YosysHQ/setup-oss-cad-suite@v4
       - name: Install openXC7 (prebuilt Apio package)
         run: |
-          gh release download 2026-10-11 --repo FPGAwars/tools-openxc7 \
+          gh release download 2026-10-19 --repo FPGAwars/tools-openxc7 \
             --pattern "apio-openxc7-linux-x86-64-*.tgz" --dir /tmp
           sudo mkdir -p /opt/openxc7
           sudo tar xzf /tmp/apio-openxc7-linux-x86-64-*.tgz -C /opt/openxc7 --strip-components=1
@@ -82,7 +82,7 @@ jobs:
         uses: YosysHQ/setup-oss-cad-suite@v4
       - name: Install openXC7 (prebuilt Apio package)
         run: |
-          gh release download 2026-10-11 --repo FPGAwars/tools-openxc7 \
+          gh release download 2026-10-19 --repo FPGAwars/tools-openxc7 \
             --pattern "apio-openxc7-linux-x86-64-*.tgz" --dir /tmp
           sudo mkdir -p /opt/openxc7
           sudo tar xzf /tmp/apio-openxc7-linux-x86-64-*.tgz -C /opt/openxc7 --strip-components=1
@@ -172,7 +172,7 @@ jobs:
         uses: YosysHQ/setup-oss-cad-suite@v4
       - name: Install openXC7 (prebuilt Apio package)
         run: |
-          gh release download 2026-10-11 --repo FPGAwars/tools-openxc7 \
+          gh release download 2026-10-19 --repo FPGAwars/tools-openxc7 \
             --pattern "apio-openxc7-linux-x86-64-*.tgz" --dir /tmp
           sudo mkdir -p /opt/openxc7
           sudo tar xzf /tmp/apio-openxc7-linux-x86-64-*.tgz -C /opt/openxc7 --strip-components=1
