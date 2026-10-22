@@ -13,7 +13,8 @@ CHIPDB_DIR         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/himbaechel/xilinx
 CHIPDB             ?= $(CHIPDB_DIR)/xc7k325t.bin
 PRJXRAY_DB         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/external/prjxray-db
 GEN_SCRIPT         ?= /tmp/nextpnr-gen/himbaechel/uarch/xilinx/gen/xilinx_gen.py
-META_ROOT          ?= /tmp/nextpnr-meta/kintex7
+META_REPO          ?= /tmp/nextpnr-meta
+META_ROOT          ?= $(META_REPO)/kintex7
 
 .PHONY: all bit clean
 
@@ -25,14 +26,15 @@ blinky-kintex7-qmtech.json: $(SRC)
 blinky-kintex7-qmtech.edif: $(SRC)
 	yosys -p "read_verilog $(SRC); synth_xilinx -family xc7 -top $(TOP); write_edif $@"
 
-# Fetch gen scripts and metadata
+# Fetch gen scripts
 $(GEN_SCRIPT):
 	@echo "Fetching nextpnr gen scripts..."
 	git clone --depth 1 https://github.com/openXC7/nextpnr.git /tmp/nextpnr-gen
 
+# Fetch metadata repo (family dirs live inside it)
 $(META_ROOT)/wire_intents.json:
 	@echo "Fetching nextpnr-xilinx-meta..."
-	git clone --depth 1 https://github.com/openXC7/nextpnr-xilinx-meta.git $(META_ROOT)
+	git clone --depth 1 https://github.com/openXC7/nextpnr-xilinx-meta.git $(META_REPO)
 
 # Generate Kintex chipdb if missing
 $(CHIPDB): $(GEN_SCRIPT) $(META_ROOT)/wire_intents.json
