@@ -1,5 +1,5 @@
 # Kintex-7 (QMTech XC7K325T) — Yosys + openXC7
-# Generates chipdb on first use (fetches gen scripts + metadata).
+# Generates chipdb on first use (fetches gen scripts, metadata, and full prjxray-db).
 
 TOP      = blinky
 SRC      = ../../src/blinky.v
@@ -11,7 +11,7 @@ DBPART   = xc7k325tffg676
 NEXTPNR_XILINX_DIR ?= /opt/openxc7
 CHIPDB_DIR         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/himbaechel/xilinx
 CHIPDB             ?= $(CHIPDB_DIR)/xc7k325t.bin
-PRJXRAY_DB         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/external/prjxray-db
+PRJXRAY_DB         ?= /tmp/prjxray-db
 GEN_SCRIPT         ?= /tmp/nextpnr-gen/himbaechel/uarch/xilinx/gen/xilinx_gen.py
 META_REPO          ?= /tmp/nextpnr-meta
 META_ROOT          ?= $(META_REPO)/kintex7
@@ -31,13 +31,18 @@ $(GEN_SCRIPT):
 	@echo "Fetching nextpnr gen scripts..."
 	git clone --depth 1 https://github.com/openXC7/nextpnr.git /tmp/nextpnr-gen
 
-# Fetch metadata repo (family dirs live inside it)
+# Fetch metadata
 $(META_ROOT)/wire_intents.json:
 	@echo "Fetching nextpnr-xilinx-meta..."
 	git clone --depth 1 https://github.com/openXC7/nextpnr-xilinx-meta.git $(META_REPO)
 
+# Fetch full prjxray-db (packaged copy omits some Kintex data)
+$(PRJXRAY_DB)/kintex7/xc7k325t/tilegrid.json:
+	@echo "Fetching full prjxray-db..."
+	git clone --depth 1 https://github.com/openXC7/prjxray-db.git $(PRJXRAY_DB)
+
 # Generate Kintex chipdb if missing
-$(CHIPDB): $(GEN_SCRIPT) $(META_ROOT)/wire_intents.json
+$(CHIPDB): $(GEN_SCRIPT) $(META_ROOT)/wire_intents.json $(PRJXRAY_DB)/kintex7/xc7k325t/tilegrid.json
 	@mkdir -p $(CHIPDB_DIR)
 	@echo "Generating chipdb for xc7k325t..."
 	python3 $(GEN_SCRIPT) --xray $(PRJXRAY_DB)/$(FAMILY) --device xc7k325t --metadata $(META_ROOT) --bba /tmp/xc7k325t.bba
