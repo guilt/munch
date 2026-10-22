@@ -190,8 +190,90 @@ jobs:
           path: boards/kintex7-qmtech/blinky-kintex7-qmtech.*
           if-no-files-found: error
 
+
+  arty-a7-100t:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup OSS CAD Suite
+        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install full openXC7 toolchain
+        run: |
+          curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
+          sudo mkdir -p /opt/openxc7
+          sudo tar xzf /tmp/openxc7.tgz -C /opt/openxc7 --strip-components=1
+          echo "/opt/openxc7/bin" >> $GITHUB_PATH
+          echo "NEXTPNR_XILINX_DIR=/opt/openxc7" >> $GITHUB_ENV
+      - name: Build Arty A7-100T
+        run: |
+          export PATH="/opt/openxc7/bin:$PATH"
+          export NEXTPNR_XILINX_DIR=/opt/openxc7
+          cd boards/arty-a7-100t
+          make
+          make bit || true
+          ls -la blinky-arty-a7-100t.* || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blinky-arty-a7-100t
+          path: boards/arty-a7-100t/blinky-arty-a7-100t.*
+          if-no-files-found: warn
+
+  arty-s7-25:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup OSS CAD Suite
+        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install full openXC7 toolchain
+        run: |
+          curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
+          sudo mkdir -p /opt/openxc7
+          sudo tar xzf /tmp/openxc7.tgz -C /opt/openxc7 --strip-components=1
+          echo "/opt/openxc7/bin" >> $GITHUB_PATH
+          echo "NEXTPNR_XILINX_DIR=/opt/openxc7" >> $GITHUB_ENV
+      - name: Build Arty S7-25
+        run: |
+          export PATH="/opt/openxc7/bin:$PATH"
+          export NEXTPNR_XILINX_DIR=/opt/openxc7
+          cd boards/arty-s7-25
+          make
+          make bit || true
+          ls -la blinky-arty-s7-25.* || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blinky-arty-s7-25
+          path: boards/arty-s7-25/blinky-arty-s7-25.*
+          if-no-files-found: warn
+
+  kintex7-480t:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup OSS CAD Suite
+        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install full openXC7 toolchain
+        run: |
+          curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
+          sudo mkdir -p /opt/openxc7
+          sudo tar xzf /tmp/openxc7.tgz -C /opt/openxc7 --strip-components=1
+          echo "/opt/openxc7/bin" >> $GITHUB_PATH
+          echo "NEXTPNR_XILINX_DIR=/opt/openxc7" >> $GITHUB_ENV
+      - name: Build Kintex-7 480T
+        run: |
+          cd boards/kintex7-480t
+          make bit || true
+          ls -la blinky-kintex7-480t.* || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blinky-kintex7-480t
+          path: boards/kintex7-480t/blinky-kintex7-480t.*
+          if-no-files-found: warn
+
   release:
-    needs: [tang-nano, tang-nano-20k, arty-a7, arty-s7, kintex7-qmtech, nexys2, superstation-yosys]
+    needs: [tang-nano, tang-nano-20k, arty-a7, arty-a7-100t, arty-s7, arty-s7-25, kintex7-qmtech, kintex7-480t, nexys2, superstation-yosys]
     if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
     permissions:

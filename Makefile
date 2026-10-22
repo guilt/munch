@@ -13,8 +13,7 @@
 .DEFAULT_GOAL := help
 
 BOARD ?= tangnano-9k
-BOARDS := tangnano-9k tangnano-20k arty-a7 arty-s7 nexys2 superstation kintex7-qmtech
-kintex7-480t
+BOARDS := tangnano-9k tangnano-20k arty-a7 arty-a7-100t arty-s7 arty-s7-25 nexys2 superstation kintex7-qmtech kintex7-480t
 
 ifeq ($(BOARD),superstation)
   BOARD_DIR := boards/mister
@@ -41,8 +40,10 @@ help: ## Show this help
 	@echo "Examples:"
 	@echo "  make pre-check"
 	@echo "  make bit                      # Tang Nano 9K .fs"
-	@echo "  make BOARD=arty-a7 bit        # Arty A7 .bit (needs openXC7)"
-	@echo "  make BOARD=arty-s7 bit"
+	@echo "  make BOARD=arty-a7 bit        # Arty A7-35T .bit (needs openXC7)"
+	@echo "  make BOARD=arty-a7-100t bit   # Arty A7-100T .bit (needs openXC7)"
+	@echo "  make BOARD=arty-s7 bit        # Arty S7-50 .bit (needs openXC7)"
+	@echo "  make BOARD=arty-s7-25 bit     # Arty S7-25 .bit (needs openXC7)"
 	@echo "  make BOARD=kintex7-qmtech bit   # Kintex-7 QMTech .bit (needs openXC7)"
 	@echo "  make BOARD=kintex7-480t bit     # Kintex-7 480T .bit (needs openXC7)"
 kintex7-480t
@@ -76,7 +77,14 @@ tangnano-20k: ## Build Tang Nano 20K full bitstream (.fs)
 arty-a7: ## Build Arty A7 Yosys netlist (.json + .edif)
 	$(MAKE) -C boards/arty-a7
 
+arty-a7-100t: ## Build Arty A7-100T Yosys netlist (.json + .edif)
+	$(MAKE) -C boards/arty-a7-100t
+
 arty-s7: ## Build Arty S7 Yosys netlist (.json + .edif)
+	$(MAKE) -C boards/arty-s7
+
+arty-s7-25: ## Build Arty S7-25 Yosys netlist (.json + .edif)
+	$(MAKE) -C boards/arty-s7-25
 kintex7-qmtech: ## Build Kintex-7 QMTech Yosys netlist (.json + .edif)
 kintex7-480t
 	$(MAKE) -C boards/kintex7-qmtech

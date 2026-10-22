@@ -3,6 +3,8 @@
 Minimal multi-board LED blinker that builds with Yosys (and open tools) and ships ready-to-flash images in GitHub Releases.
 
 **Boards:** Tang Nano 9K · Tang Nano 20K · Arty A7 · Arty S7 · Kintex-7 (QMTech XC7K325T) · Nexys 2 · SuperStation One / MiSTer (Cyclone V)
+- **Arty S7-25** (`arty-s7-25`): openXC7 bitstream
+- **Arty A7-100T** (`arty-a7-100t`): openXC7 bitstream
 
 ---
 
@@ -33,7 +35,9 @@ openFPGALoader -b qmtechKintex7 blinky-kintex7-qmtech.bit
 | Tang Nano 9K           | blinky-tangnano-9k.fs             | Full open flow — ready to flash             |
 | Tang Nano 20K          | blinky-tangnano-20k.fs            | Full open flow — ready to flash             |
 | Arty A7                | blinky-arty-a7.bit (+ json/edif)  | Full open flow in CI (openXC7) — ready to flash |
+- **Arty A7-100T** (`arty-a7-100t`): openXC7 bitstream
 | Arty S7                | blinky-arty-s7.bit (+ json/edif)  | Full open flow in CI (openXC7) — ready to flash |
+- **Arty S7-25** (`arty-s7-25`): openXC7 bitstream
 | Kintex-7 (QMTech)      | blinky-kintex7-qmtech.bit         | Full open flow in CI (openXC7) — ready to flash |
 | Nexys 2                | blinky-nexys2.json + .edif        | Yosys experimental synth (finish with ISE)  |
 | SuperStation / MiSTer  | blinky-superstation.vqm           | Yosys open synth (full .rbf needs local Quartus) |
@@ -54,6 +58,7 @@ make                    # help
 make pre-check          # check tools
 make bit                # final artifact for default board (tangnano-9k)
 make BOARD=arty-a7 bit  # Arty A7 .bit (needs openXC7 locally; CI has it)
+- **Arty A7-100T** (`arty-a7-100t`): openXC7 bitstream
 make BOARD=kintex7-qmtech bit  # Kintex-7 .bit (needs openXC7)
 make build              # intermediates only (json/edif/vqm/fasm)
 make flash              # flash default board (openFPGALoader)
