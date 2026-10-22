@@ -18,6 +18,7 @@ openFPGALoader -b tangnano9k blinky-tangnano-9k.fs
 ```
 
 Example (Kintex-7 QMTech):
+- **Kintex-7 480T** (`kintex7-480t`): openXC7 bitstream (chipdb generated on first use)
 
 ```bash
 openFPGALoader -b qmtechKintex7 blinky-kintex7-qmtech.bit

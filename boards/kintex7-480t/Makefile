@@ -1,0 +1,67 @@
+# Kintex-7 (XC7K480T) — Yosys + openXC7
+# Generates chipdb on first use (fetches gen scripts, metadata, and full prjxray-db).
+
+TOP      = blinky
+SRC      = ../../src/blinky.v
+XDC      = ../../constraints/kintex7-480t.xdc
+PART     = xc7k480tffg676-1
+FAMILY   = kintex7
+DBPART   = xc7k480tffg676
+
+NEXTPNR_XILINX_DIR ?= /opt/openxc7
+CHIPDB_DIR         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/himbaechel/xilinx
+CHIPDB             ?= $(CHIPDB_DIR)/xc7k480t.bin
+PRJXRAY_DB         ?= /tmp/prjxray-db
+GEN_SCRIPT         ?= /tmp/nextpnr-gen/himbaechel/uarch/xilinx/gen/xilinx_gen.py
+META_REPO          ?= /tmp/nextpnr-meta
+META_ROOT          ?= $(META_REPO)/kintex7
+
+.PHONY: all bit clean
+
+all: blinky-kintex7-480t.json blinky-kintex7-480t.edif
+
+blinky-kintex7-480t.json: $(SRC)
+	yosys -p "read_verilog $(SRC); synth_xilinx -family xc7 -top $(TOP); write_json $@"
+
+blinky-kintex7-480t.edif: $(SRC)
+	yosys -p "read_verilog $(SRC); synth_xilinx -family xc7 -top $(TOP); write_edif $@"
+
+# Fetch gen scripts
+$(GEN_SCRIPT):
+	@echo "Fetching nextpnr gen scripts..."
+	git clone --depth 1 https://github.com/openXC7/nextpnr.git /tmp/nextpnr-gen
+
+# Fetch metadata
+$(META_ROOT)/wire_intents.json:
+	@echo "Fetching nextpnr-xilinx-meta..."
+	git clone --depth 1 https://github.com/openXC7/nextpnr-xilinx-meta.git $(META_REPO)
+
+# Fetch full prjxray-db (packaged copy omits some Kintex data)
+$(PRJXRAY_DB)/kintex7/xc7k480t/tilegrid.json:
+	@echo "Fetching full prjxray-db..."
+	git clone --depth 1 https://github.com/openXC7/prjxray-db.git $(PRJXRAY_DB)
+
+# Generate Kintex chipdb if missing
+$(CHIPDB): $(GEN_SCRIPT) $(META_ROOT)/wire_intents.json $(PRJXRAY_DB)/kintex7/xc7k480t/tilegrid.json
+	@mkdir -p $(CHIPDB_DIR)
+	@echo "Generating chipdb for xc7k480t..."
+	python3 $(GEN_SCRIPT) --xray $(PRJXRAY_DB)/$(FAMILY) --device xc7k480t --metadata $(META_ROOT) --bba /tmp/xc7k480t.bba
+	$(NEXTPNR_XILINX_DIR)/bin/bbasm -l /tmp/xc7k480t.bba $(CHIPDB)
+	@rm -f /tmp/xc7k480t.bba
+
+bit: blinky-kintex7-480t.bit
+
+blinky-kintex7-480t.bit: blinky-kintex7-480t.json $(XDC) $(CHIPDB)
+	/opt/openxc7/bin/nextpnr-xilinx --help >/dev/null 2>&1 || command -v nextpnr-xilinx >/dev/null 2>&1 || { \
+	  echo "nextpnr-xilinx not found. Install openXC7 and set NEXTPNR_XILINX_DIR."; \
+	  exit 1; }
+	$(or $(shell command -v nextpnr-xilinx),/opt/openxc7/bin/nextpnr-xilinx) --device $(PART) --chipdb $(CHIPDB) -o xdc=$(XDC) --json blinky-kintex7-480t.json -o fasm=blinky-kintex7-480t.fasm
+	$(or $(shell command -v fasm2frames),/opt/openxc7/bin/fasm2frames) --part $(PART) --db-root $(PRJXRAY_DB)/$(FAMILY) blinky-kintex7-480t.fasm > blinky-kintex7-480t.frames
+	$(or $(shell command -v xc7frames2bit),/opt/openxc7/bin/xc7frames2bit) --part_file $(PRJXRAY_DB)/$(FAMILY)/$(PART)/part.yaml \
+	              --part_name $(PART) \
+	              --frm_file blinky-kintex7-480t.frames \
+	              --output_file $@
+	@echo "Built $@"
+
+clean:
+	rm -f *.json *.edif *.fasm *.frames *.bit
