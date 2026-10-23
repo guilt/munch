@@ -11,8 +11,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install OSS CAD Suite (direct)
+        run: |
+          curl -L -o /tmp/oss-cad.tgz https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-14/oss-cad-suite-linux-x64-20261014.tgz
+          sudo mkdir -p /opt/oss-cad-suite
+          sudo tar xzf /tmp/oss-cad.tgz -C /opt/oss-cad-suite --strip-components=1
+          echo "/opt/oss-cad-suite/bin" >> $GITHUB_PATH
+          source /opt/oss-cad-suite/environment || true
         continue-on-error: true
       - name: Build Tang Nano 9K bitstream
         run: |
@@ -30,8 +35,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install OSS CAD Suite (direct)
+        run: |
+          curl -L -o /tmp/oss-cad.tgz https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-14/oss-cad-suite-linux-x64-20261014.tgz
+          sudo mkdir -p /opt/oss-cad-suite
+          sudo tar xzf /tmp/oss-cad.tgz -C /opt/oss-cad-suite --strip-components=1
+          echo "/opt/oss-cad-suite/bin" >> $GITHUB_PATH
+          source /opt/oss-cad-suite/environment || true
         continue-on-error: true
       - name: Build Tang Nano 20K bitstream
         run: |
@@ -50,8 +60,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install OSS CAD Suite (direct)
+        run: |
+          curl -L -o /tmp/oss-cad.tgz https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-14/oss-cad-suite-linux-x64-20261014.tgz
+          sudo mkdir -p /opt/oss-cad-suite
+          sudo tar xzf /tmp/oss-cad.tgz -C /opt/oss-cad-suite --strip-components=1
+          echo "/opt/oss-cad-suite/bin" >> $GITHUB_PATH
+          source /opt/oss-cad-suite/environment || true
       - name: Install full openXC7 toolchain (includes Kintex chipdbs)
         run: |
           curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
@@ -80,8 +95,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install OSS CAD Suite (direct)
+        run: |
+          curl -L -o /tmp/oss-cad.tgz https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-14/oss-cad-suite-linux-x64-20261014.tgz
+          sudo mkdir -p /opt/oss-cad-suite
+          sudo tar xzf /tmp/oss-cad.tgz -C /opt/oss-cad-suite --strip-components=1
+          echo "/opt/oss-cad-suite/bin" >> $GITHUB_PATH
+          source /opt/oss-cad-suite/environment || true
       - name: Install full openXC7 toolchain (includes Kintex chipdbs)
         run: |
           curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
@@ -110,8 +130,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install OSS CAD Suite (direct)
+        run: |
+          curl -L -o /tmp/oss-cad.tgz https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-14/oss-cad-suite-linux-x64-20261014.tgz
+          sudo mkdir -p /opt/oss-cad-suite
+          sudo tar xzf /tmp/oss-cad.tgz -C /opt/oss-cad-suite --strip-components=1
+          echo "/opt/oss-cad-suite/bin" >> $GITHUB_PATH
+          source /opt/oss-cad-suite/environment || true
       - name: Build Nexys 2 (intermediates)
         run: |
           cd boards/nexys2
@@ -128,8 +153,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install OSS CAD Suite (direct)
+        run: |
+          curl -L -o /tmp/oss-cad.tgz https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-14/oss-cad-suite-linux-x64-20261014.tgz
+          sudo mkdir -p /opt/oss-cad-suite
+          sudo tar xzf /tmp/oss-cad.tgz -C /opt/oss-cad-suite --strip-components=1
+          echo "/opt/oss-cad-suite/bin" >> $GITHUB_PATH
+          source /opt/oss-cad-suite/environment || true
       - name: Build SuperStation VQM
         run: |
           cd boards/mister
@@ -170,8 +200,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install OSS CAD Suite (direct)
+        run: |
+          curl -L -o /tmp/oss-cad.tgz https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-14/oss-cad-suite-linux-x64-20261014.tgz
+          sudo mkdir -p /opt/oss-cad-suite
+          sudo tar xzf /tmp/oss-cad.tgz -C /opt/oss-cad-suite --strip-components=1
+          echo "/opt/oss-cad-suite/bin" >> $GITHUB_PATH
+          source /opt/oss-cad-suite/environment || true
       - name: Install full openXC7 toolchain (includes Kintex chipdbs)
         run: |
           curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
@@ -197,8 +232,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install OSS CAD Suite (direct)
+        run: |
+          curl -L -o /tmp/oss-cad.tgz https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-14/oss-cad-suite-linux-x64-20261014.tgz
+          sudo mkdir -p /opt/oss-cad-suite
+          sudo tar xzf /tmp/oss-cad.tgz -C /opt/oss-cad-suite --strip-components=1
+          echo "/opt/oss-cad-suite/bin" >> $GITHUB_PATH
+          source /opt/oss-cad-suite/environment || true
       - name: Install full openXC7 toolchain
         run: |
           curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
@@ -225,8 +265,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install OSS CAD Suite (direct)
+        run: |
+          curl -L -o /tmp/oss-cad.tgz https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-14/oss-cad-suite-linux-x64-20261014.tgz
+          sudo mkdir -p /opt/oss-cad-suite
+          sudo tar xzf /tmp/oss-cad.tgz -C /opt/oss-cad-suite --strip-components=1
+          echo "/opt/oss-cad-suite/bin" >> $GITHUB_PATH
+          source /opt/oss-cad-suite/environment || true
       - name: Install full openXC7 toolchain
         run: |
           curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
@@ -253,8 +298,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Setup OSS CAD Suite
-        uses: YosysHQ/setup-oss-cad-suite@v4
+      - name: Install OSS CAD Suite (direct)
+        run: |
+          curl -L -o /tmp/oss-cad.tgz https://github.com/YosysHQ/oss-cad-suite-build/releases/download/2026-10-14/oss-cad-suite-linux-x64-20261014.tgz
+          sudo mkdir -p /opt/oss-cad-suite
+          sudo tar xzf /tmp/oss-cad.tgz -C /opt/oss-cad-suite --strip-components=1
+          echo "/opt/oss-cad-suite/bin" >> $GITHUB_PATH
+          source /opt/oss-cad-suite/environment || true
       - name: Install full openXC7 toolchain
         run: |
           curl -L -o /tmp/openxc7.tgz https://github.com/cavearr/toolchain-openxc7-releases/releases/download/2026-10-19/openxc7-toolchain-linux-x86-64-20261019.tgz
