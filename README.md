@@ -2,9 +2,7 @@
 
 Minimal multi-board LED blinker that builds with Yosys (and open tools) and ships ready-to-flash images in GitHub Releases.
 
-**Boards:** Tang Nano 9K · Tang Nano 20K · Arty A7 · Arty S7 · Kintex-7 (QMTech XC7K325T) · Nexys 2 · SuperStation One / MiSTer (Cyclone V)
-- **Arty S7-25** (`arty-s7-25`): openXC7 bitstream
-- **Arty A7-100T** (`arty-a7-100t`): openXC7 bitstream
+**Boards:** Tang Nano 9K · Tang Nano 20K · Arty A7 (-35T / -100T) · Arty S7 (-50 / -25) · Kintex-7 (QMTech XC7K325T) · Kintex-7 480T (YPCB-00338-1P1) · Nexys 2 · SuperStation One / MiSTer (Cyclone V)
 
 ---
 
@@ -20,7 +18,6 @@ openFPGALoader -b tangnano9k blinky-tangnano-9k.fs
 ```
 
 Example (Kintex-7 QMTech):
-- **Kintex-7 480T** (`kintex7-480t`): openXC7 bitstream (chipdb generated on first use)
 
 ```bash
 openFPGALoader -b qmtechKintex7 blinky-kintex7-qmtech.bit
@@ -35,11 +32,12 @@ openFPGALoader -b qmtechKintex7 blinky-kintex7-qmtech.bit
 | Tang Nano 9K           | blinky-tangnano-9k.fs             | Full open flow — ready to flash             |
 | Tang Nano 20K          | blinky-tangnano-20k.fs            | Full open flow — ready to flash             |
 | Arty A7                | blinky-arty-a7.bit (+ json/edif)  | Full open flow in CI (openXC7) — ready to flash |
-- **Arty A7-100T** (`arty-a7-100t`): openXC7 bitstream
+| Arty A7-100T           | blinky-arty-a7-100t.bit (+ json/edif) | Full open flow in CI (openXC7) — ready to flash |
 | Arty S7                | blinky-arty-s7.bit (+ json/edif)  | Full open flow in CI (openXC7) — ready to flash |
-- **Arty S7-25** (`arty-s7-25`): openXC7 bitstream
+| Arty S7-25             | blinky-arty-s7-25.bit (+ json/edif) | Full open flow in CI (openXC7) — ready to flash |
 | Kintex-7 (QMTech)      | blinky-kintex7-qmtech.bit         | Full open flow in CI (openXC7) — ready to flash |
-| Nexys 2                | blinky-nexys2.json + .edif        | Yosys experimental synth (finish with ISE)  |
+| [Kintex-7 480T (YPCB)](boards/kintex7-480t/README.md) | blinky-kintex7-480t.bit | openXC7 + AC24 pull-up; JTAG load (no PCIe) |
+| Nexys 2                | blinky-nexys2.json + .edif        | Yosys synth in CI; .bit via local ISE 14.7  |
 | SuperStation / MiSTer  | blinky-superstation.vqm           | Yosys open synth (full .rbf needs local Quartus) |
 
 ---
@@ -57,9 +55,11 @@ Board pin constraints live under `constraints/`.
 make                    # help
 make pre-check          # check tools
 make bit                # final artifact for default board (tangnano-9k)
-make BOARD=arty-a7 bit  # Arty A7 .bit (needs openXC7 locally; CI has it)
-- **Arty A7-100T** (`arty-a7-100t`): openXC7 bitstream
+make BOARD=arty-a7 bit  # Arty A7-35T .bit (needs openXC7 locally; CI has it)
+make BOARD=arty-a7-100t bit    # Arty A7-100T .bit
+make BOARD=arty-s7-25 bit      # Arty S7-25 .bit
 make BOARD=kintex7-qmtech bit  # Kintex-7 .bit (needs openXC7)
+make BOARD=kintex7-480t bit    # YPCB-00338-1P1 .bit (JTAG; needs openXC7)
 make build              # intermediates only (json/edif/vqm/fasm)
 make flash              # flash default board (openFPGALoader)
 make clean
@@ -75,7 +75,8 @@ make BOARD=tangnano-20k bit    # .fs
 make BOARD=arty-a7 bit         # .bit
 make BOARD=arty-s7 bit         # .bit
 make BOARD=kintex7-qmtech bit  # .bit
-make BOARD=nexys2 bit          # .json + .edif
+make BOARD=kintex7-480t bit    # YPCB .bit (JTAG load)
+make BOARD=nexys2 bit          # .bit (needs ISE 14.7)
 make BOARD=superstation bit    # .vqm
 ```
 

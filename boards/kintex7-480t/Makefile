@@ -4,9 +4,10 @@
 TOP      = blinky
 SRC      = ../../src/blinky.v
 XDC      = ../../constraints/kintex7-480t.xdc
-PART     = xc7k480tffg676-1
+BOARD_FASM ?= board.fasm
+PART     = xc7k480tffg1156-2
 FAMILY   = kintex7
-DBPART   = xc7k480tffg676
+DBPART   = xc7k480tffg1156
 
 NEXTPNR_XILINX_DIR ?= /opt/openxc7
 CHIPDB_DIR         ?= $(NEXTPNR_XILINX_DIR)/share/nextpnr/himbaechel/xilinx
@@ -51,12 +52,13 @@ $(CHIPDB): $(GEN_SCRIPT) $(META_ROOT)/wire_intents.json $(PRJXRAY_DB)/kintex7/xc
 
 bit: blinky-kintex7-480t.bit
 
-blinky-kintex7-480t.bit: blinky-kintex7-480t.json $(XDC) $(CHIPDB)
+blinky-kintex7-480t.bit: blinky-kintex7-480t.json $(XDC) $(CHIPDB) $(BOARD_FASM)
 	/opt/openxc7/bin/nextpnr-xilinx --help >/dev/null 2>&1 || command -v nextpnr-xilinx >/dev/null 2>&1 || { \
 	  echo "nextpnr-xilinx not found. Install openXC7 and set NEXTPNR_XILINX_DIR."; \
 	  exit 1; }
 	$(or $(shell command -v nextpnr-xilinx),/opt/openxc7/bin/nextpnr-xilinx) --device $(PART) --chipdb $(CHIPDB) -o xdc=$(XDC) --json blinky-kintex7-480t.json -o fasm=blinky-kintex7-480t.fasm
-	$(or $(shell command -v fasm2frames),/opt/openxc7/bin/fasm2frames) --part $(PART) --db-root $(PRJXRAY_DB)/$(FAMILY) blinky-kintex7-480t.fasm > blinky-kintex7-480t.frames
+	cat blinky-kintex7-480t.fasm $(BOARD_FASM) > blinky-kintex7-480t.board.fasm
+	$(or $(shell command -v fasm2frames),/opt/openxc7/bin/fasm2frames) --part $(PART) --db-root $(PRJXRAY_DB)/$(FAMILY) blinky-kintex7-480t.board.fasm > blinky-kintex7-480t.frames
 	$(or $(shell command -v xc7frames2bit),/opt/openxc7/bin/xc7frames2bit) --part_file $(PRJXRAY_DB)/$(FAMILY)/$(PART)/part.yaml \
 	              --part_name $(PART) \
 	              --frm_file blinky-kintex7-480t.frames \
@@ -64,4 +66,4 @@ blinky-kintex7-480t.bit: blinky-kintex7-480t.json $(XDC) $(CHIPDB)
 	@echo "Built $@"
 
 clean:
-	rm -f *.json *.edif *.fasm *.frames *.bit
+	rm -f *.json *.edif *.fasm *.board.fasm *.frames *.bit

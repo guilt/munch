@@ -21,10 +21,17 @@ else
   BOARD_DIR := boards/$(BOARD)
 endif
 
-.PHONY: help pre-check check-tools build bit flash clean test \
-	tangnano-9k tangnano-20k arty-a7 arty-s7 nexys2 superstation mister \
+.PHONY: help pre-check check-tools check-board build bit flash clean test \
+	tangnano-9k tangnano-20k arty-a7 arty-a7-100t arty-s7 arty-s7-25 \
+	nexys2 superstation mister kintex7-qmtech kintex7-480t \
 	flash-tangnano-9k flash-tangnano-20k flash-arty-a7 flash-arty-s7 \
-	flash-nexys2 flash-superstation all
+	flash-nexys2 flash-superstation flash-kintex7-qmtech flash-kintex7-480t all
+
+check-board:
+	@test -d $(BOARD_DIR) || { \
+	  echo "ERROR: unknown BOARD '$(BOARD)'"; \
+	  echo "       Boards: $(BOARDS)"; \
+	  exit 1; }
 
 help: ## Show this help
 	@echo "munch — Multi-FPGA Usable Newbie Chips"
@@ -46,9 +53,8 @@ help: ## Show this help
 	@echo "  make BOARD=arty-s7-25 bit     # Arty S7-25 .bit (needs openXC7)"
 	@echo "  make BOARD=kintex7-qmtech bit   # Kintex-7 QMTech .bit (needs openXC7)"
 	@echo "  make BOARD=kintex7-480t bit     # Kintex-7 480T .bit (needs openXC7)"
-kintex7-480t
-
-
+	@echo "  make BOARD=nexys2 bit          # Nexys 2 .bit (needs ISE 14.7)"
+	@echo ""
 	@echo "  make flash"
 	@echo "  make clean"
 	@echo ""
@@ -85,12 +91,12 @@ arty-s7: ## Build Arty S7 Yosys netlist (.json + .edif)
 
 arty-s7-25: ## Build Arty S7-25 Yosys netlist (.json + .edif)
 	$(MAKE) -C boards/arty-s7-25
-kintex7-qmtech: ## Build Kintex-7 QMTech Yosys netlist (.json + .edif)
-kintex7-480t
-	$(MAKE) -C boards/kintex7-qmtech
-kintex7-480t
 
-	$(MAKE) -C boards/arty-s7
+kintex7-qmtech: ## Build Kintex-7 QMTech Yosys netlist (.json + .edif)
+	$(MAKE) -C boards/kintex7-qmtech
+
+kintex7-480t: ## Build Kintex-7 480T Yosys netlist (.json + .edif)
+	$(MAKE) -C boards/kintex7-480t
 
 nexys2: ## Build Nexys 2 Yosys netlist (.json + .edif)
 	$(MAKE) -C boards/nexys2
@@ -99,11 +105,11 @@ superstation: mister ## Build SuperStation / Cyclone V Yosys netlist (.vqm)
 mister:
 	$(MAKE) -C boards/mister
 
-build: ## Build intermediates for BOARD (default tangnano-9k)
+build: check-board ## Build intermediates for BOARD (default tangnano-9k)
 	@echo "Building intermediates: $(BOARD)"
 	$(MAKE) $(BOARD)
 
-bit: ## Build final artifact for BOARD (default tangnano-9k)
+bit: check-board ## Build final artifact for BOARD (default tangnano-9k)
 	@echo "Building final artifact: $(BOARD)"
 	$(MAKE) -C $(BOARD_DIR) bit
 
@@ -120,23 +126,18 @@ flash-arty-a7: ## Flash Arty A7 (.bit via openFPGALoader)
 	openFPGALoader -b arty_a7_35t boards/arty-a7/blinky-arty-a7.bit
 
 flash-arty-s7: ## Flash Arty S7 (.bit via openFPGALoader)
-flash-kintex7-qmtech: ## Flash Kintex-7 QMTech (.bit via openFPGALoader)
-kintex7-480t
-	openFPGALoader -b qmtechKintex7 boards/kintex7-qmtech/blinky-kintex7-qmtech.bit
-kintex7-480t
-
 	@test -f boards/arty-s7/blinky-arty-s7.bit || { echo "Missing .bit. Run: make BOARD=arty-s7 bit"; exit 1; }
-	@echo "  make BOARD=kintex7-qmtech bit   # Kintex-7 QMTech .bit (needs openXC7)"
-	@echo "  make BOARD=kintex7-480t bit     # Kintex-7 480T .bit (needs openXC7)"
-kintex7-480t
-
-
 	openFPGALoader -b arty_s7_50 boards/arty-s7/blinky-arty-s7.bit
 
-flash-nexys2: ## Flash Nexys 2 (needs ISE .bit)
-	@echo "Nexys 2 full bitstream requires ISE 14.7."
-	@echo "Current open artifacts: boards/nexys2/blinky-nexys2.{json,edif}"
-	@echo "See FLASH.md"
+flash-kintex7-qmtech: ## Flash Kintex-7 QMTech (.bit via openFPGALoader)
+	openFPGALoader -b qmtechKintex7 boards/kintex7-qmtech/blinky-kintex7-qmtech.bit
+
+flash-kintex7-480t: ## Flash Kintex-7 480T (.bit via openFPGALoader)
+	openFPGALoader -b qmtechKintex7 boards/kintex7-480t/blinky-kintex7-480t.bit
+
+flash-nexys2: ## Flash Nexys 2 (.bit via openFPGALoader)
+	@test -f boards/nexys2/blinky-nexys2.bit || { echo "Missing .bit. Run: make BOARD=nexys2 bit"; exit 1; }
+	openFPGALoader -b nexys2 boards/nexys2/blinky-nexys2.bit
 
 flash-superstation: ## Flash SuperStation / MiSTer (copy .rbf to SD card)
 	@echo "SuperStation / MiSTer: copy blinky-superstation.rbf to the SD card root."
@@ -155,10 +156,11 @@ clean: ## Clean all board build artifacts
 	$(MAKE) -C boards/tangnano-9k clean
 	$(MAKE) -C boards/tangnano-20k clean
 	$(MAKE) -C boards/arty-a7 clean
+	$(MAKE) -C boards/arty-a7-100t clean
 	$(MAKE) -C boards/arty-s7 clean
+	$(MAKE) -C boards/arty-s7-25 clean
 	$(MAKE) -C boards/kintex7-qmtech clean
-kintex7-480t
-
+	$(MAKE) -C boards/kintex7-480t clean
 	$(MAKE) -C boards/nexys2 clean
 	$(MAKE) -C boards/mister clean
 	@echo "Cleaned."

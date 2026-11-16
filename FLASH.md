@@ -52,12 +52,14 @@ openFPGALoader -b arty_s7 -f blinky-arty-s7.bit
 
 ## Nexys 2 (Spartan-3E)
 
-**File:** `blinky-nexys2.edif`  
-**Open flow:** Yosys experimental (`synth_xilinx -family xc3se`). Full bitstream needs ISE 14.7.
+**File:** `blinky-nexys2.bit` (built locally)
 
-After finishing in ISE:
+**Flow:** Yosys `synth_xilinx -family xc3se` + ISE 14.7 place & route.
+
+Build and flash:
 ```bash
-openFPGALoader -b nexys2 blinky-nexys2.bit
+make BOARD=nexys2 bit
+openFPGALoader -b nexys2 boards/nexys2/blinky-nexys2.bit
 ```
 Or use Digilent Impact / Adept.
 
@@ -86,7 +88,8 @@ openFPGALoader -c usb-blaster blinky-superstation.rbf
 |------------------------|-------------------------------|-------------------------------------------------|
 | Tang Nano 9K           | `blinky-tangnano-9k.fs`        | `openFPGALoader -b tangnano9k FILE`             |
 | Arty S7                | `blinky-arty-s7.json`         | Local openXC7 → `openFPGALoader -b arty_s7` |
-| Nexys 2                | `blinky-nexys2.edif`          | Finish with ISE → `openFPGALoader -b nexys2`    |
+| Nexys 2                | `blinky-nexys2.bit` (local)   | `make BOARD=nexys2 bit` → `openFPGALoader -b nexys2` |
+| Kintex-7 480T (YPCB)   | `blinky-kintex7-480t.bit`     | JTAG `J1` → `openFPGALoader -b ypcb003381p1` |
 | SuperStation / MiSTer  | `blinky-superstation.rbf`     | Copy to SD card, or `openFPGALoader -c usb-blaster` |
 
 Add `-f` to openFPGALoader commands for persistent flash where supported.
@@ -114,3 +117,26 @@ See the board's master XDC for pin confirmation (clk = E3, LED0 = H5).
 ```bash
 openFPGALoader -b qmtechKintex7 blinky-kintex7-qmtech.bit
 ```
+
+## Kintex-7 480T (YPCB-00338-1P1)
+
+**File:** `blinky-kintex7-480t.bit` (local openXC7 build).
+**JTAG only:** header `J1` (2×7, 1.8 V). PCIe does not carry JTAG. The image
+does not implement PCIe, so loading it removes the card from the bus until
+power-off/JPROGRAM.
+
+```bash
+# Xilinx Platform Cable USB II / DLC10 clone (openFPGALoader v1.2.0+)
+openFPGALoader -c xilinxPlatformCableUsb \
+  --probe-firmware /opt/Xilinx/14.7/ISE_DS/ISE/bin/lin64/xusb_xp2.hex \
+  --misc-device 0x10931093,8,inspur_cpld \
+  -b ypcb003381p1 blinky-kintex7-480t.bit
+
+# Digilent JTAG-HS3 / FT232H
+openFPGALoader -c digilent_hs3 -b ypcb003381p1 blinky-kintex7-480t.bit
+```
+
+Before writing flash, back up the 64 MiB factory image (`--dump-flash`; Vivado
+Lab is faster) and keep a JTAG recovery path. `-f` writes the BPI flash. Never
+program eFUSE/OTP bits, and do not remove the AC24 pull-up in `board.fasm`.
+See `boards/kintex7-480t/README.md` for the full pinout and cable details.

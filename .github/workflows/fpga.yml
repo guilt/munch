@@ -140,7 +140,7 @@ jobs:
       - name: Build Nexys 2 (intermediates)
         run: |
           cd boards/nexys2
-          make bit
+          make all
           ls -la blinky-nexys2.*
       - uses: actions/upload-artifact@v4
         if: success()

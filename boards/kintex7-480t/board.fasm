@@ -1,0 +1,5 @@
+# YPCB-00338-1P1 board-level FASM (appended to every build).
+# AC24 is wired to the board reset and must not be left at the unused-pin
+# default (pull-down), or startup never reaches DONE. See the sirmick/ypcb-00338-1p1
+# board notes and TiferKing/ypcb_00338_1p1_hack issue #3.
+LIOB33_SING_X0Y150.IOB_Y0.PULLTYPE.PULLUP
